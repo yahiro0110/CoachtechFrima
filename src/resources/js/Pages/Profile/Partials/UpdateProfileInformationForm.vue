@@ -1,4 +1,13 @@
 <script setup>
+/**
+ * @requires InputError - フォーム入力エラーを表示するためのコンポーネント
+ * @requires InputLabel - フォーム入力ラベルを表示するためのコンポーネント
+ * @requires PrimaryButton - プライマリボタンを表示するためのコンポーネント
+ * @requires TextInput - テキスト入力を表示するためのコンポーネント
+ * @requires Link - Inertia.jsを用いたアプリケーション内のページ間ナビゲーションを提供するVueコンポーネント
+ * @requires useForm - Inertia.jsのフォームハンドリング機能を提供し、フォームの状態管理や送信時の処理を容易にする
+ * @requires ref - リアクティブなデータ参照を作成するために使用
+ */
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
@@ -6,12 +15,28 @@ import TextInput from '@/Components/TextInput.vue';
 import { Link, useForm } from '@inertiajs/inertia-vue3';
 import { ref } from 'vue';
 
+/**
+ * コンポーネントのプロパティ定義。
+ *
+ * @property {Boolean} mustVerifyEmail - ユーザーがメールアドレスを確認する必要があるかどうかを示すブール値
+ * @property {String} status - ユーザーのメールアドレス確認ステータスを示す文字列
+ * @property {Object} user - 現在ログインしているユーザー情報を含むオブジェクト
+ */
 const props = defineProps({
     mustVerifyEmail: Boolean,
     status: String,
     user: Object,
 });
 
+/**
+ * アカウント情報入力フォームのデータモデル。
+ *
+ * @type {Object} form - アカウント情報の登録に必要なデータを保持するフォームオブジェクト
+ * @property {String} image_path - ユーザーのプロフィール画像のファイルパス
+ * @property {String} name - ユーザーのアカウント名
+ * @property {String} email - ユーザーのメールアドレス
+ * @property {File|null} file - ユーザーのプロフィール画像ファイル、初期値はnull
+ */
 const form = useForm({
     image_path: props.user.user_image.image_path,
     name: props.user.name,
@@ -40,6 +65,13 @@ const handleFileChange = (event) => {
     }
 };
 
+/**
+ * ファイル入力ダイアログをトリガーする関数。
+ *
+ * `id`が`file`のinput要素を探し、存在する場合クリックイベントを発火させてファイル選択画面を表示させる。
+ * これにより、ユーザーは直接ファイル入力要素をクリックすることなく、プロフィール画像を選択できるため、
+ * 当該の要素を非表示にしておくことができる。
+ */
 const triggerFileInput = () => {
     const fileInput = document.getElementById('file');
     if (fileInput) {
@@ -47,16 +79,22 @@ const triggerFileInput = () => {
     }
 };
 
+/**
+ * アカウント情報を更新する関数。
+ *
+ * Inertia.jsのpostメソッドを使用して、フォームに入力されたデータをサーバーに送信する。
+ * 成功時にはフォームの送信状態を更新し、エラー時にはエラーメッセージを表示するための処理が含まれる。
+ * `preserveScroll`はページ遷移後のスクロール位置維持に使用。
+ * `onSuccess`はフォーム送信成功時に実行されるコールバック関数で、`form.recentlySuccessful`をtrueに設定する。
+ */
 const updateProfileInformation = () => {
     form.post(route('profile.update'), {
-        errorBag: 'updateProfileInformation',
         preserveScroll: true,
         onSuccess: () => {
             form.recentlySuccessful = true;
         },
     });
 };
-
 </script>
 
 <template>
