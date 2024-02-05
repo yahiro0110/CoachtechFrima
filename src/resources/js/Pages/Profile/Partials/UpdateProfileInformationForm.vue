@@ -21,16 +21,23 @@ const form = useForm({
 <template>
     <section>
         <header>
-            <h2 class="text-lg font-medium text-gray-900">Profile Information</h2>
+            <h2 class="text-lg font-medium text-gray-900">アカウント情報</h2>
 
             <p class="mt-1 text-sm text-gray-600">
-                Update your account's profile information and email address.
+                アカウント名およびメールアドレスを変更します。
             </p>
         </header>
 
         <form @submit.prevent="form.patch(route('profile.update'))" class="mt-6 space-y-6">
             <div>
-                <InputLabel for="name" value="Name" />
+                <img class="inline-block h-[8rem] w-[8rem] rounded-full" src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=300&h=300&q=80" alt="Image Description">
+                <button type="button" class="ml-5 py-3 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-gray-500 text-gray-500 hover:border-gray-400 hover:text-gray-400 disabled:opacity-50 disabled:pointer-events-none ">
+                    プロフィール画像の変更
+                </button>
+            </div>
+
+            <div>
+                <InputLabel for="name" value="アカウント名" />
 
                 <TextInput id="name" type="text" class="mt-1 block w-full" v-model="form.name" required autofocus autocomplete="name" />
 
@@ -38,7 +45,7 @@ const form = useForm({
             </div>
 
             <div>
-                <InputLabel for="email" value="Email" />
+                <InputLabel for="email" value="メールアドレス" />
 
                 <TextInput id="email" type="email" class="mt-1 block w-full" v-model="form.email" required autocomplete="username" />
 
@@ -59,10 +66,10 @@ const form = useForm({
             </div>
 
             <div class="flex items-center gap-4">
-                <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
+                <PrimaryButton :disabled="form.processing">更新</PrimaryButton>
 
                 <Transition enter-from-class="opacity-0" leave-to-class="opacity-0" class="transition ease-in-out">
-                    <p v-if="form.recentlySuccessful" class="text-sm text-gray-600">Saved.</p>
+                    <p v-if="form.recentlySuccessful" class="text-sm text-gray-600">更新しました。</p>
                 </Transition>
             </div>
         </form>
