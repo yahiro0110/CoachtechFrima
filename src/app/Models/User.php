@@ -12,6 +12,10 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    // --------------------------------------------------------------------------------
+    // モデル属性とリレーションシップ
+    // --------------------------------------------------------------------------------
+
     /**
      * The attributes that are mass assignable.
      *
@@ -41,4 +45,43 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * ユーザーに関連する役割のコレクションを取得する。
+     *
+     * このメソッドは多対多のリレーションシップを表し、関連するRoleモデルのインスタンスのコレクションを返す。
+     * ユーザーと役割は `role_user` 中間テーブルを介して関連付けられる。
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'role_user');
+    }
+
+    /**
+     * ユーザーに関連する詳細情報を取得する。
+     *
+     * このメソッドは一対一のリレーションシップを表し、関連するUserDetailモデルのインスタンスを返す。
+     * ユーザは `user_details` テーブルを介してユーザ詳細情報と関連付けられる。
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function userDetail()
+    {
+        return $this->hasOne(UserDetail::class);
+    }
+
+    /**
+     * ユーザーに関連するアイコン画像を取得する。
+     *
+     * このメソッドは一対一のリレーションシップを表し、関連するUserImageモデルのインスタンスを返す。
+     * ユーザは `user_images` テーブルを介してアイコン画像と関連付けられる。
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function userImage()
+    {
+        return $this->hasOne(UserImage::class);
+    }
 }
