@@ -3,19 +3,60 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { Link, useForm, usePage } from '@inertiajs/inertia-vue3';
+import { Link, useForm } from '@inertiajs/inertia-vue3';
+import { ref } from 'vue';
 
 const props = defineProps({
     mustVerifyEmail: Boolean,
     status: String,
+    user: Object,
 });
-
-const user = usePage().props.value.auth.user;
 
 const form = useForm({
-    name: user.name,
-    email: user.email,
+    image_path: props.user.user_image.image_path,
+    name: props.user.name,
+    email: props.user.email,
+    file: null,
 });
+
+/**
+ * プロフィール画像のプレビュー用のURLを提供するリアクティブなプロパティ。
+ *
+ *  @type {string} - プロフィール画像のファイルパス
+ */
+let userIcon = form.image_path ? ref('/storage/images/users/' + form.image_path) : ref('/storage/images/users/default.jpg');
+
+/**
+ * ファイル選択時に呼び出され、画像プレビューを更新する。
+ *
+ * @param {Event} event - ファイル入力イベント
+ */
+const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => userIcon.value = e.target.result;
+        reader.readAsDataURL(file);
+    }
+};
+
+const triggerFileInput = () => {
+    const fileInput = document.getElementById('file');
+    if (fileInput) {
+        fileInput.click();
+    }
+};
+
+const updateProfileInformation = () => {
+    form.post(route('profile.update'), {
+        errorBag: 'updateProfileInformation',
+        preserveScroll: true,
+        onSuccess: () => {
+            form.recentlySuccessful = true;
+        },
+    });
+};
+
 </script>
 
 <template>
@@ -28,12 +69,19 @@ const form = useForm({
             </p>
         </header>
 
-        <form @submit.prevent="form.patch(route('profile.update'))" class="mt-6 space-y-6">
+        <form @submit.prevent="updateProfileInformation" class="mt-6 space-y-6">
             <div>
-                <img class="inline-block h-[8rem] w-[8rem] rounded-full" src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=300&h=300&q=80" alt="Image Description">
-                <button type="button" class="ml-5 py-3 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-gray-500 text-gray-500 hover:border-gray-400 hover:text-gray-400 disabled:opacity-50 disabled:pointer-events-none ">
-                    プロフィール画像の変更
-                </button>
+                <div class="flex flex-row items-center">
+                    <img class="inline-block h-[8rem] w-[8rem] rounded-full object-cover" :src="userIcon" alt="Image Description">
+                    <div class="flex flex-col items-center mt-7">
+                        <button type="button" class="ml-5 py-3 px-4  gap-x-2 text-sm font-semibold rounded-lg border border-gray-500 text-gray-500 hover:border-gray-400 hover:text-gray-400 disabled:opacity-50 disabled:pointer-events-none " @click="triggerFileInput">
+                            プロフィール画像の変更
+                        </button>
+                        <p class="ml-6 mt-2 text-sm text-red-500 inline-flex" id="file_input_help">PNG, JPG or JPEG (MAX. 5MB)</p>
+                    </div>
+                </div>
+                <input type="file" id="file" name="file" ref="file" @change="handleFileChange" @input="form.file = $event.target.files[0]" class="hidden">
+                <InputError class="p-1" :message="form.errors.file" />
             </div>
 
             <div>

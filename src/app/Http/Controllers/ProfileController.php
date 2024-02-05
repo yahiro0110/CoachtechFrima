@@ -6,8 +6,10 @@ use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -30,6 +32,22 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
+        $userImage = $request->user()->userImage;
+        $file_name = $userImage->image_path;
+
+        if ($request->file('file')) {
+            // 古いファイルが存在するか確認し、存在する場合は削除
+            if (Storage::exists('public/images/users/' . $file_name)) {
+                Storage::delete('public/images/users/' . $file_name);
+            }
+            // 新しいファイル名を生成し、ファイルを保存
+            $file_name = date('Ymd') . Str::random(15) . '_' . $request->file('file')->getClientOriginalName();
+            $request->file('file')->storeAs('public/images/users/', $file_name);
+            // データベースに保存
+            $userImage->image_path = $file_name;
+            $userImage->save();
+        }
+
         $request->user()->fill($request->validated());
 
         if ($request->user()->isDirty('email')) {
