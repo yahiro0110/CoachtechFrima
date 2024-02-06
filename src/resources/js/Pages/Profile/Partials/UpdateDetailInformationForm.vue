@@ -117,7 +117,9 @@ const updateDetailInformation = () => {
 
                 <TextInput id="address" type="text" class="mt-1 block w-full" v-model="form.address" />
 
-                <p class="mt-1 text-sm text-gray-500 text-right">{{ form.address?.length }} / {{ maxAddressLength }}</p>
+                <p class="mt-1 text-sm text-right" :class="{ 'text-gray-500': form.address.length <= maxAddressLength, 'text-red-500': form.address.length > maxAddressLength }">{{ form.address?.length }} / {{ maxAddressLength }}</p>
+
+                <InputError v-show="form.address.length > maxAddressLength" class="mt-2" :message="'住所は' + maxAddressLength + '文字までです'" />
 
                 <InputError class="mt-2" :message="form.errors.address" />
             </div>
@@ -127,7 +129,9 @@ const updateDetailInformation = () => {
 
                 <TextInput id="building" type="text" class="mt-1 block w-full" v-model="form.building" />
 
-                <p class="mt-1 text-sm text-gray-500 text-right">{{ form.building?.length }} / {{ maxBuildingLength }}</p>
+                <p class="mt-1 text-sm text-right" :class="{ 'text-gray-500': form.building.length <= maxBuildingLength, 'text-red-500': form.building.length > maxBuildingLength }">{{ form.building?.length }} / {{ maxBuildingLength }}</p>
+
+                <InputError v-show="form.building.length > maxBuildingLength" class="mt-2" :message="'建物は' + maxBuildingLength + '文字までです'" />
 
                 <InputError class="mt-2" :message="form.errors.building" />
             </div>
@@ -137,7 +141,9 @@ const updateDetailInformation = () => {
 
                 <textarea class="py-3 px-4 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" rows="3" placeholder="出品ページの自己紹介文を入力してください。" v-model="form.introduction"></textarea>
 
-                <p class="mt-1 text-sm text-gray-500 text-right">{{ form.introduction?.length }} / {{ maxIntroductionLength }}</p>
+                <p class="mt-1 text-sm text-right" :class="{ 'text-gray-500': form.introduction.length <= maxIntroductionLength, 'text-red-500': form.introduction.length > maxIntroductionLength }">{{ form.introduction?.length }} / {{ maxIntroductionLength }}</p>
+
+                <InputError v-show="form.introduction.length > maxIntroductionLength" class="mt-2" :message="'自己紹介は' + maxIntroductionLength + '文字までです'" />
 
                 <InputError class="mt-2" :message="form.errors.introduction" />
             </div>
