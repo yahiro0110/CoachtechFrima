@@ -84,4 +84,17 @@ class User extends Authenticatable
     {
         return $this->hasOne(UserImage::class);
     }
+
+    /**
+     * ユーザーに関連する商品を取得する。
+     *
+     * このメソッドは一対多のリレーションシップを表し、関連するItemモデルのインスタンスのコレクションを返す。
+     * ユーザは `items` テーブルを介して商品情報と関連付けられる。
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function items()
+    {
+        return $this->hasMany(Item::class);
+    }
 }
