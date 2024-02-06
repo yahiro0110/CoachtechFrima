@@ -32,7 +32,7 @@ class Item extends Model
     /**
      * このモデルが所属するUserモデルのインスタンスを取得する。
      *
-     * このメソッドは1対1のリレーションシップの逆向きを表し、所属するUserモデルのインスタンスを返す。
+     * このメソッドは一対多のリレーションシップの逆向きを表し、所属するUserモデルのインスタンスを返す。
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
@@ -44,7 +44,7 @@ class Item extends Model
     /**
      * このモデルが所属するConditionモデルのインスタンスを取得する。
      *
-     * このメソッドは1対1のリレーションシップの逆向きを表し、所属するConditionモデルのインスタンスを返す。
+     * このメソッドは一対多のリレーションシップの逆向きを表し、所属するConditionモデルのインスタンスを返す。
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
@@ -56,12 +56,25 @@ class Item extends Model
     /**
      * このモデルが所属するCategoryモデルのインスタンスを取得する。
      *
-     * このメソッドは1対1のリレーションシップの逆向きを表し、所属するCategoryモデルのインスタンスを返す。
+     * このメソッドは一対多のリレーションシップの逆向きを表し、所属するCategoryモデルのインスタンスを返す。
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * 商品に関連する商品画像を取得する。
+     *
+     * このメソッドは一対多のリレーションシップを表し、関連するItemImageモデルのインスタンスのコレクションを返す。
+     * 商品は `item_images` テーブルを介して商品画像と関連付けられる。
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function itemImages()
+    {
+        return $this->hasMany(ItemImage::class);
     }
 }
