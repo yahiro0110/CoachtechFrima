@@ -45,6 +45,13 @@ const form = useForm({
 });
 
 /**
+ * 入力フォーム（アカウント名）の最大文字数。
+ *
+ * @type {number} - 最大文字数
+ */
+const maxNameLength = 20;
+
+/**
  * プロフィール画像のプレビュー用のURLを提供するリアクティブなプロパティ。
  *
  *  @type {string} - プロフィール画像のファイルパス
@@ -123,15 +130,25 @@ const updateProfileInformation = () => {
             </div>
 
             <div>
-                <InputLabel for="name" value="アカウント名" />
+                <div class="flex items-baseline">
+                    <InputLabel for="name" value="アカウント名" />
+                    <span class="text-red-500 text-lg">*</span>
+                </div>
 
                 <TextInput id="name" type="text" class="mt-1 block w-full" v-model="form.name" required autofocus autocomplete="name" />
+
+                <p class="mt-1 text-sm text-right" :class="{ 'text-gray-500': form.name.length <= maxNameLength, 'text-red-500': form.name.length > maxNameLength }">{{ form.name?.length }} / {{ maxNameLength }}</p>
+
+                <InputError v-show="form.name.length > maxNameLength" class="mt-2" :message="'名前は' + maxNameLength + '文字までです'" />
 
                 <InputError class="mt-2" :message="form.errors.name" />
             </div>
 
             <div>
-                <InputLabel for="email" value="メールアドレス" />
+                <div class="flex items-baseline">
+                    <InputLabel for="email" value="メールアドレス" />
+                    <span class="text-red-500 text-lg">*</span>
+                </div>
 
                 <TextInput id="email" type="email" class="mt-1 block w-full" v-model="form.email" required autocomplete="username" />
 
