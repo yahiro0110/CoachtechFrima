@@ -17,7 +17,7 @@ class ProfileUpdateRequest extends FormRequest
     {
         return [
             'file' => ['nullable', 'image', 'mimes:jpeg,png,jpg,', 'max:5000'],
-            'name' => ['required', 'string', 'max:60'],
+            'name' => ['required', 'string', 'max:20'],
             'email' => ['required', 'email', 'max:254', Rule::unique(User::class)->ignore($this->user()->id), 'regex:/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zAZ]{2,4}$/'],
         ];
     }
@@ -31,7 +31,7 @@ class ProfileUpdateRequest extends FormRequest
 
             'name.required' => '名前は必須です',
             'name.string' => '名前は文字列で入力してください',
-            'name.max' => '名前は60文字以内で入力してください',
+            'name.max' => '名前は20文字以内で入力してください',
 
             'email.required' => 'メールアドレスは必須です',
             'email.email' => '有効なメールアドレスを入力してください',
