@@ -110,8 +110,8 @@ watch(categoryPath, (newValue, oldValue) => {
             </div>
 
             <div>
-                <div class="flex items-baseline">
-                    <InputLabel class="-mt-3" for="category" value="カテゴリ" />
+                <div class="flex items-baseline -mt-1">
+                    <InputLabel for="category" value="カテゴリ" />
                     <span class="text-red-500 text-lg">*</span>
                 </div>
                 <div class="flex justify-between items-center" v-show="form.category_id">
