@@ -125,7 +125,7 @@ const updateProfileInformation = () => {
                         <p class="ml-6 mt-2 text-sm text-red-500 inline-flex" id="file_input_help">PNG, JPG or JPEG (MAX. 5MB)</p>
                     </div>
                 </div>
-                <input type="file" id="file" name="file" ref="file" @change="handleFileChange" @input="form.file = $event.target.files[0]" class="hidden">
+                <input type="file" id="file" name="file" ref="file" accept=".png,.jpg,.jpeg" @change="handleFileChange" @input="form.file = $event.target.files[0]" class="hidden">
                 <InputError class="p-1" :message="form.errors.file" />
             </div>
 
@@ -135,13 +135,13 @@ const updateProfileInformation = () => {
                     <span class="text-red-500 text-lg">*</span>
                 </div>
 
-                <TextInput id="name" type="text" class="mt-1 block w-full" v-model="form.name" required autofocus autocomplete="name" />
+                <TextInput id="name" type="text" class="mt-1 block w-full" v-model="form.name" required autofocus autocomplete="name" :class="{ 'focus:border-red-500': form.name.length > maxNameLength, 'focus:ring-red-500': form.name.length > maxNameLength }" />
 
                 <p class="mt-1 text-sm text-right" :class="{ 'text-gray-500': form.name.length <= maxNameLength, 'text-red-500': form.name.length > maxNameLength }">{{ form.name?.length }} / {{ maxNameLength }}</p>
 
-                <InputError v-show="form.name.length > maxNameLength" class="mt-2" :message="'名前は' + maxNameLength + '文字までです'" />
+                <InputError class="-mt-4" :message="form.errors.name" />
 
-                <InputError class="mt-2" :message="form.errors.name" />
+                <InputError v-show="form.name.length > maxNameLength" :message="'名前は' + maxNameLength + '文字までです'" :class="{ '-mt-4': !(form.errors.name), 'mt-2': form.errors.name }" />
             </div>
 
             <div>
