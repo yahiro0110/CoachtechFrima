@@ -1,3 +1,37 @@
+<script setup>
+import { ref } from 'vue';
+
+defineProps({
+    formFile: Object,
+});
+
+const emit = defineEmits(['update:formFile']);
+
+/**
+ * プロフィール画像のプレビュー用のURLを提供するリアクティブなプロパティ。
+ *
+ *  @type {string} - プロフィール画像のファイルパス
+ */
+let itemImages = ref(null);
+
+/**
+ * ファイル選択時に呼び出され、画像プレビューを更新する。
+ *
+ * @param {Event} event - ファイル入力イベント
+ */
+const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            itemImages.value = e.target.result;
+            emit('update:formFile', file); // ここでカスタムイベントを発火
+        };
+        reader.readAsDataURL(file);
+    }
+};
+</script>
+
 <template>
     <section>
         <header>
@@ -8,6 +42,8 @@
             </p>
         </header>
 
+        <img class="inline-block h-[8rem] w-[8rem] rounded-full object-cover" v-show="itemImages" :src="itemImages" alt="Image Description">
+
         <div class="col-span-full">
             <div class="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
                 <div class="text-center">
@@ -17,7 +53,7 @@
                     <div class="mt-4 flex flex-col text-sm leading-6 text-gray-600">
                         <label for="file-upload" class="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500">
                             <span>画像をアップロード</span>
-                            <input id="file-upload" name="file-upload" type="file" class="sr-only">
+                            <input id="file-upload" name="file-upload" type="file" class="sr-only" ref="file" @change="handleFileChange" @input="formFile = $event.target.files[0]" />
                         </label>
                         <p class="hidden pl-1 md:block">またはこちらにドラッグ&ドロップしてください</p>
                     </div>

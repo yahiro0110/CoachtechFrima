@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateItemRequest;
 use App\Models\Category;
 use App\Models\Condition;
 use App\Models\Item;
+use App\Models\ItemImage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -49,15 +50,7 @@ class ItemController extends Controller
      */
     public function store(StoreItemRequest $request)
     {
-        // if ($request->file('file')) {
-        //     // 新しいファイル名を生成し、ファイルを保存
-        //     $file_name = date('Ymd') . Str::random(15) . '_' . $request->file('file')->getClientOriginalName();
-        //     $request->file('file')->storeAs('public/images', $file_name);
-        // } else {
-        //     $file_name = null;
-        // }
-
-        Item::create([
+        $item = Item::create([
             'name' => $request->name,
             'description' => $request->description,
             'condition_id' => $request->condition_id,
@@ -66,6 +59,17 @@ class ItemController extends Controller
             'seller_id' => Auth::id(),
             'category_id' => $request->category_id,
         ]);
+
+        if ($request->file('file')) {
+            // 新しいファイル名を生成し、ファイルを保存
+            $file_name = date('Ymd') . Str::random(15) . '_' . $request->file('file')->getClientOriginalName();
+            $request->file('file')->storeAs('public/images/items', $file_name);
+            // データベースに保存
+            ItemImage::create([
+                'item_id' => $item->id,
+                'image_path' => $file_name,
+            ]);
+        }
 
         return Redirect::route('items.create');
     }

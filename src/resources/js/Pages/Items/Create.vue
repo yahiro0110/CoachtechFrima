@@ -20,6 +20,10 @@ const form = useForm({
     file: [],
 });
 
+const handleFileUpdate = (file) => {
+    form.file = file;
+};
+
 /**
  * 商品情報を登録する関数。
  *
@@ -33,6 +37,7 @@ const StoreItem = () => {
         preserveScroll: true,
         onSuccess: () => {
             form.recentlySuccessful = true;
+            form.reset();
         },
     });
 };
@@ -50,7 +55,7 @@ const StoreItem = () => {
             <div class="py-12">
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                     <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                        <StoreItemImagesForm class="mx-auto" />
+                        <StoreItemImagesForm class="mx-auto" :formFile="form.file" @update:formFile="handleFileUpdate" />
                     </div>
 
                     <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
