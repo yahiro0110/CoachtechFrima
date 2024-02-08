@@ -4,9 +4,10 @@
  * @requires InputLabel - フォーム入力ラベルを表示するためのコンポーネント
  * @requires PrimaryButton - プライマリボタンを表示するためのコンポーネント
  * @requires TextInput - テキスト入力を表示するためのコンポーネント
+ * @requires PostalInput - 郵便番号入力を表示するためのコンポーネント
  * @requires useForm - Inertia.jsのフォームハンドリング機能を提供し、フォームの状態管理や送信時の処理を容易にする
- * @requires ref - リアクティブなデータ参照を作成するために使用
  * @requires YubinBangoCore - yubinbango-core2ライブラリからインポート、日本の郵便番号から住所情報を取得する機能を提供
+ * @requires watch - Vue 3のリアクティブなデータを監視するための関数
  */
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
