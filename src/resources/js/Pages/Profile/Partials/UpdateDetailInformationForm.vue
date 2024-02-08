@@ -116,37 +116,37 @@ const updateDetailInformation = () => {
             <div>
                 <InputLabel for="address" value="住所" />
 
-                <TextInput id="address" type="text" class="mt-1 block w-full" v-model="form.address" :class="{ 'focus:border-red-500': form.address.length > maxAddressLength, 'focus:ring-red-500': form.address.length > maxAddressLength }" />
+                <TextInput id="address" type="text" class="mt-1 block w-full" v-model="form.address" :class="{ 'focus:border-red-500': form.address?.length > maxAddressLength, 'focus:ring-red-500': form.address?.length > maxAddressLength }" />
 
-                <p class="mt-1 text-sm text-right" :class="{ 'text-gray-500': form.address.length <= maxAddressLength, 'text-red-500': form.address.length > maxAddressLength }">{{ form.address?.length }} / {{ maxAddressLength }}</p>
+                <p class="mt-1 text-sm text-right" :class="{ 'text-gray-500': form.address?.length <= maxAddressLength, 'text-red-500': form.address?.length > maxAddressLength }">{{ form.address?.length ?? 0 }} / {{ maxAddressLength }}</p>
 
                 <InputError class="-mt-4" :message="form.errors.address" />
 
-                <InputError v-show="form.address.length > maxAddressLength" :message="'住所は' + maxAddressLength + '文字までです'" :class="{ '-mt-4': !(form.errors.address), 'mt-2': form.errors.address }" />
+                <InputError v-show="form.address?.length > maxAddressLength" :message="'住所は' + maxAddressLength + '文字までです'" :class="{ '-mt-4': !(form.errors.address), 'mt-2': form.errors.address }" />
             </div>
 
             <div>
                 <InputLabel for="building" value="建物" />
 
-                <TextInput id="building" type="text" class="mt-1 block w-full" v-model="form.building" :class="{ 'focus:border-red-500': form.building.length > maxBuildingLength, 'focus:ring-red-500': form.building.length > maxBuildingLength }" />
+                <TextInput id="building" type="text" class="mt-1 block w-full" v-model="form.building" :class="{ 'focus:border-red-500': form.building?.length > maxBuildingLength, 'focus:ring-red-500': form.building?.length > maxBuildingLength }" />
 
-                <p class="mt-1 text-sm text-right" :class="{ 'text-gray-500': form.building.length <= maxBuildingLength, 'text-red-500': form.building.length > maxBuildingLength }">{{ form.building?.length }} / {{ maxBuildingLength }}</p>
+                <p class="mt-1 text-sm text-right" :class="{ 'text-gray-500': form.building?.length <= maxBuildingLength, 'text-red-500': form.building?.length > maxBuildingLength }">{{ form.building?.length ?? 0 }} / {{ maxBuildingLength }}</p>
 
                 <InputError class="-mt-4" :message="form.errors.building" />
 
-                <InputError v-show="form.building.length > maxBuildingLength" :message="'建物は' + maxBuildingLength + '文字までです'" :class="{ '-mt-4': !(form.errors.building), 'mt-2': form.errors.building }" />
+                <InputError v-show="form.building?.length > maxBuildingLength" :message="'建物は' + maxBuildingLength + '文字までです'" :class="{ '-mt-4': !(form.errors.building), 'mt-2': form.errors.building }" />
             </div>
 
             <div>
                 <InputLabel for="introduction" value="自己紹介" />
 
-                <textarea class="py-3 px-4 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" rows="3" placeholder="出品ページの自己紹介文を入力してください。" v-model="form.introduction" :class="{ 'focus:border-red-500': form.introduction.length > maxIntroductionLength, 'focus:ring-red-500': form.introduction.length > maxIntroductionLength }"></textarea>
+                <textarea class="py-3 px-4 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" rows="3" placeholder="出品ページの自己紹介文を入力してください。" v-model="form.introduction" :class="{ 'focus:border-red-500': form.introduction?.length > maxIntroductionLength, 'focus:ring-red-500': form.introduction?.length > maxIntroductionLength }"></textarea>
 
-                <p class="mt-1 text-sm text-right" :class="{ 'text-gray-500': form.introduction.length <= maxIntroductionLength, 'text-red-500': form.introduction.length > maxIntroductionLength }">{{ form.introduction?.length }} / {{ maxIntroductionLength }}</p>
+                <p class="mt-1 text-sm text-right" :class="{ 'text-gray-500': form.introduction?.length <= maxIntroductionLength, 'text-red-500': form.introduction?.length > maxIntroductionLength }">{{ form.introduction?.length ?? 0 }} / {{ maxIntroductionLength }}</p>
 
                 <InputError class="-mt-4" :message="form.errors.introduction" />
 
-                <InputError v-show="form.introduction.length > maxIntroductionLength" :message="'自己紹介は' + maxIntroductionLength + '文字までです'" :class="{ '-mt-4': !(form.errors.introduction), 'mt-2': form.errors.introduction }" />
+                <InputError v-show="form.introduction?.length > maxIntroductionLength" :message="'自己紹介は' + maxIntroductionLength + '文字までです'" :class="{ '-mt-4': !(form.errors.introduction), 'mt-2': form.errors.introduction }" />
             </div>
 
             <div class="flex items-center gap-4">
