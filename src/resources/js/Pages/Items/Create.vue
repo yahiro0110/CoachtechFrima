@@ -38,12 +38,12 @@ const props = defineProps({
  * @property {Array} file - 商品の画像ファイル
  */
 const form = useForm({
-    name: null,
+    name: '',
     category_id: null,
-    brand: null,
+    brand: '',
     condition_id: null,
-    description: null,
-    price: null,
+    description: '',
+    price: '',
     files: [],
 });
 
@@ -88,7 +88,7 @@ const StoreItem = () => {
             <div class="py-12">
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                     <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                        <StoreItemImagesForm class="mx-auto" ref="imagesFormRef" :formFiles="form.files" />
+                        <StoreItemImagesForm class="mx-auto" ref="imagesFormRef" :form="form" />
                     </div>
 
                     <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
@@ -101,7 +101,7 @@ const StoreItem = () => {
                             禁止されている行為及び出品物を必ずご確認ください。また、加盟店規約及びプライバシーポリシーに同意の上、「出品する」ボタンを押してください。
                         </p>
                         <div class="flex items-center gap-4">
-                            <PrimaryButton class="bg-danger" :disabled="form.processing">出品する</PrimaryButton>
+                            <PrimaryButton :disabled="form.processing">出品する</PrimaryButton>
 
                             <Transition enter-from-class="opacity-0" leave-to-class="opacity-0" class="transition ease-in-out">
                                 <p v-if="form.recentlySuccessful" class="text-sm text-danger">商品の出品登録を完了しました。</p>

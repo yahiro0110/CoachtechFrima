@@ -3,15 +3,16 @@
  * @requires ref - リアクティブなデータ参照を作成するために使用
  * @requires watch - Vue 3のリアクティブなデータを監視するための関数
  */
-import { ref, watch } from 'vue';
+import InputError from '@/Components/InputError.vue';
+import { computed, ref, watch } from 'vue';
 
 /**
  * コンポーネントのプロパティ定義。
  *
- * @property {Object} formFiles - 商品画像のファイルオブジェクト、ページリダイレクト時にファイルがクリアされた場合に画像プレビューもクリアするために使用
+ * @property {Object} form - 商品情報の登録に必要なデータを保持するフォームオブジェクト
  */
 const props = defineProps({
-    formFiles: Array,
+    form: Object,
 });
 
 /**
@@ -74,11 +75,32 @@ defineExpose({ getSelectedFiles });
  * 親コンポーネントのプロパティを監視し、商品画像のファイルがクリアされたら画像プレビューもクリアする。
  * 商品登録後のページリダイレクト時にファイルがクリアされた場合に画像プレビューもクリアするための処理。
  */
-watch(() => props.formFiles, (newVal) => {
+watch(() => props.form.files, (newVal) => {
     if (Array.isArray(newVal) && newVal.length === 0) {
         itemImages.value = []; // ファイルがクリアされたら画像プレビューもクリア
     }
 }, { immediate: true });
+
+/**
+ * 商品画像のエラーメッセージを集約する。
+ *
+ * @type {String} - 商品画像のエラーメッセージ
+ */
+const filesErrorMessage = computed(() => {
+    // `files` のエラーメッセージを返します。
+    if (props.form.errors.files) {
+        return props.form.errors.files;
+    }
+
+    // `files.*` のエラーメッセージを集約します。
+    const fileErrors = Object.keys(props.form.errors)
+        .filter(key => key.startsWith('files.'))
+        .map(key => props.form.errors[key])
+        .flat() // 複数のエラーメッセージを平坦化
+        .reduce((unique, item) => unique.includes(item) ? unique : [...unique, item], []); // 重複を除外
+
+    return fileErrors.length > 0 ? fileErrors.join(', ') : null;
+});
 </script>
 
 <template>
@@ -89,6 +111,7 @@ watch(() => props.formFiles, (newVal) => {
             <p class="mt-1 mb-5 text-sm text-gray-600">
                 商品画像を登録してください。
             </p>
+            <InputError class="mt-2" :message="filesErrorMessage" />
         </header>
 
         <div class="sm:flex sm:justify-between md:grid md:grid-cols-5 md:gap-4">
@@ -112,7 +135,7 @@ watch(() => props.formFiles, (newVal) => {
                     <div class="mt-4 flex flex-col text-sm leading-6 text-gray-600">
                         <label for="file-upload" class="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500">
                             <span>画像をアップロード</span>
-                            <input id="file-upload" name="file-upload" type="file" multiple class="sr-only" ref="file" @change="handleFileChange" @input="formFile = $event.target.files[0]" />
+                            <input id="file-upload" name="file-upload" type="file" accept=".png,.jpg,.jpeg" multiple class="sr-only" ref="file" @change="handleFileChange" />
                         </label>
                         <p class="hidden pl-1 md:block">またはこちらにドラッグ&ドロップしてください</p>
                     </div>
