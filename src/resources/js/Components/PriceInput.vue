@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 const props = defineProps({
     modelValue: String
@@ -21,13 +21,17 @@ const validatePrice = (price) => {
  * 入力された価格を検証し、フォーマットを適用する。
  */
 const handleInput = () => {
-    // 入力された郵便番号を検証
+    // 入力された価格を検証
     const validatedPrice = validatePrice(localPrice.value);
     // ローカルの状態を更新
     localPrice.value = validatedPrice;
     // 検証済みの値を親コンポーネントに渡す
     emit('update:modelValue', validatedPrice);
 };
+
+watch(() => props.modelValue, (newVal) => {
+    localPrice.value = newVal || ''; // modelValueが更新されたら、それに応じてlocalPriceを更新
+}, { immediate: true });
 </script>
 
 <template>

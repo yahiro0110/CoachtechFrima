@@ -1,7 +1,7 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
-defineProps({
+const props = defineProps({
     formFile: Object,
 });
 
@@ -30,6 +30,12 @@ const handleFileChange = (event) => {
         reader.readAsDataURL(file);
     }
 };
+
+watch(() => props.formFile, (newVal) => {
+    if (Array.isArray(newVal) && newVal.length === 0) {
+        itemImages.value = null; // ファイルがクリアされたら画像プレビューもクリア
+    }
+}, { immediate: true });
 </script>
 
 <template>
