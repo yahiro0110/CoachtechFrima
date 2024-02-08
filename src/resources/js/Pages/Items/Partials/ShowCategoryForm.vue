@@ -1,27 +1,68 @@
 <script setup>
-import { ref, computed } from 'vue';
+/**
+ * @requires Modal - モーダルダイアログを表示するためのコンポーネント
+ * @requires ref - リアクティブなデータ参照を作成するために使用
+ * @requires computed - Vue 3の算出プロパティを作成するために使用
+ */
 import Modal from '@/Components/Modal.vue';
+import { ref, computed } from 'vue';
 
+/**
+ * コンポーネントのプロパティ定義。
+ *
+ * @property {Array} categories - 商品カテゴリーの一覧を含む配列
+ */
 const props = defineProps({
     categories: Array,
 });
 
-const emit = defineEmits(['update:categoryPath', 'close']); // emitを定義
+/**
+ * @requires defineEmits - カスタムイベントを定義するための関数
+ */
+const emit = defineEmits(['update:categoryPath', 'close']);
 
+/**
+ * リアクティブプロパティの定義。
+ *
+ * @property {Number} selectedCategoryId - 選択されたカテゴリーのID
+ * @property {Array} output - カテゴリパス、親コンポーネントにカテゴリパスを通知するために使用
+ * @property {Array} navigationHistory - カテゴリ選択の履歴、戻るリンクを表示するために使用
+ * @property {Array} selectedCategories - 選択されたカテゴリー配下の一覧、カテゴリ選択フォームの表示を更新するために使用
+ */
 const selectedCategoryId = ref(null);
 const output = ref([]);
-const navigationHistory = ref([]); // カテゴリ選択の履歴を保持する配列
+const navigationHistory = ref([]);
+const selectedCategories = ref(null);
 
+/**
+ * 商品カテゴリーの一覧を取得する関数。
+ * 親カテゴリーのIDを指定することで、そのカテゴリーに属する商品カテゴリーの一覧を取得する。
+ *
+ * @param {Number|null} parentId - 親カテゴリーのID
+ * @returns {Array} - 商品カテゴリーの一覧
+ */
 const fetchCategories = (parentId = null) => {
     return props.categories.filter(category => category.parent_id === parentId);
 };
 
+/**
+ * 商品カテゴリーの一覧を取得する算出プロパティ。
+ * カテゴリフォームを開いたときの初期状態として、ルートカテゴリーの一覧を取得する。
+ */
 const rootCategories = computed(() => {
     return fetchCategories();
 });
 
-const selectedCategories = ref(rootCategories.value);
+// ルートカテゴリーの一覧を初期状態として設定
+selectedCategories.value = rootCategories.value;
 
+/**
+ * カテゴリパスを構築する関数。
+ * 選択されたカテゴリーのIDを指定することで、そのカテゴリーの階層パスを構築する。
+ *
+ * @param {Number} categoryId - 選択されたカテゴリーのID
+ * @returns {Array} - カテゴリパス
+ */
 const buildCategoryPath = (categoryId) => {
     const path = [];
     let currentCategory = props.categories.find(category => category.id === categoryId);
@@ -32,11 +73,22 @@ const buildCategoryPath = (categoryId) => {
     return path;
 };
 
+/**
+ * カテゴリを選択したときの処理関数。
+ * 選択されたカテゴリーのIDを指定することで、そのカテゴリーに属する商品カテゴリーの一覧を取得し、表示を更新する。
+ * また、カテゴリが最下層のカテゴリである場合は、カテゴリパスを構築し、親コンポーネントにカテゴリパスを通知する。
+ *
+ * @param {Number} categoryId - 選択されたカテゴリーのID
+ */
 const selectCategory = (categoryId) => {
+    // 選択されたカテゴリーのIDを保持
     selectedCategoryId.value = categoryId;
+    // 選択されたカテゴリーに属する商品カテゴリーの一覧を取得
     const children = fetchCategories(categoryId);
-    navigationHistory.value.push(selectedCategories.value); // 現在の状態を履歴に追加
+    // カテゴリ選択の履歴に現在の状態を追加
+    navigationHistory.value.push(selectedCategories.value);
 
+    // 選択されたカテゴリーが最下層のカテゴリであるかどうかを判定
     if (children.length > 0) {
         selectedCategories.value = children;
     } else {
@@ -44,19 +96,28 @@ const selectCategory = (categoryId) => {
         output.value = buildCategoryPath(categoryId);
         // 親コンポーネントにカテゴリパスを通知
         emit('update:categoryPath', output.value);
+        // モーダルウィンドウ表示時に初期状態で表示させるための処置
         selectedCategories.value = rootCategories.value; // ルートカテゴリに戻る
         navigationHistory.value = []; // 履歴をクリア
-        emit('close'); // モーダルを閉じる
+        // モーダルを閉じる
+        emit('close');
     }
 };
 
-// 「戻る」をクリックしたときの処理
+/**
+ * カテゴリ選択の履歴をもとに、前のカテゴリに戻る関数。
+ * カテゴリ選択の履歴をもとに、前のカテゴリに戻り、表示を更新する。
+ */
 const goBack = () => {
     if (navigationHistory.value.length > 0) {
-        selectedCategories.value = navigationHistory.value.pop(); // 最後の履歴を取り出し、表示を更新
+        selectedCategories.value = navigationHistory.value.pop();
     }
 };
 
+/**
+ * モーダルを閉じる関数。
+ * 閉じるボタンをクリックしたときに、履歴をくクリアし、選択フォームを閉じる。
+ */
 const closeModal = () => {
     selectedCategories.value = rootCategories.value; // ルートカテゴリに戻る
     navigationHistory.value = []; // 履歴をクリア

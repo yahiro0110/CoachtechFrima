@@ -1,50 +1,81 @@
 <script setup>
 /**
- * @requires InputError - フォーム入力エラーを表示するためのコンポーネント
  * @requires InputLabel - フォーム入力ラベルを表示するためのコンポーネント
- * @requires PrimaryButton - プライマリボタンを表示するためのコンポーネント
  * @requires TextInput - テキスト入力を表示するためのコンポーネント
- * @requires useForm - Inertia.jsのフォームハンドリング機能を提供し、フォームの状態管理や送信時の処理を容易にする
+ * @requires InputError - フォーム入力エラーを表示するためのコンポーネント
+ * @requires PriceInput - 価格入力を表示するためのコンポーネント
+ * @requires ShowCategoryForm - カテゴリフォームを表示するためのコンポーネント
  * @requires ref - リアクティブなデータ参照を作成するために使用
- * @requires YubinBangoCore - yubinbango-core2ライブラリからインポート、日本の郵便番号から住所情報を取得する機能を提供
+ * @requires watch - Vue 3のリアクティブなデータを監視するための関数
  */
-import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import InputError from '@/Components/InputError.vue';
 import PriceInput from '@/Components/PriceInput.vue';
 import ShowCategoryForm from './ShowCategoryForm.vue';
 import { ref, watch } from 'vue';
 
+/**
+ * コンポーネントのプロパティ定義。
+ *
+ * @property {Object} form - 商品情報の登録に必要なデータを保持するフォームオブジェクト
+ * @property {Array} categories - 商品カテゴリーの一覧を含む配列
+ * @property {Array} conditions - 商品の状態の一覧を含む配列
+ */
 const props = defineProps({
     form: Object,
     categories: Array,
     conditions: Array,
 });
 
-const confirmingUserDeletion = ref(false);
+/**
+ * カテゴリフォームを表示するためのリアクティブなプロパティ。
+ *
+ * @type {boolean} - カテゴリフォームを表示するかどうかを示すブール値
+ */
+const categoryFormButton = ref(false);
 
-const confirmUserDeletion = () => {
-    confirmingUserDeletion.value = true;
+/**
+ * カテゴリフォームを表示する関数。
+ */
+const categorySelection = () => {
+    categoryFormButton.value = true;
 };
 
+/**
+ * カテゴリフォームを非表示にする関数。
+ */
 const closeModal = () => {
-    confirmingUserDeletion.value = false;
+    categoryFormButton.value = false;
 };
 
-const categoryPath = ref([]); // 子コンポーネントから受け取るカテゴリパスを格納
+/**
+ * カテゴリパスを保持するリアクティブなプロパティ。
+ * 子コンポーネントから受け取るカテゴリパスを格納する。
+ *
+ * @type {Array} - カテゴリパスを保持する配列
+ */
+const categoryPath = ref([]);
 
-// categoryPathの変化を監視する
+/**
+ * カテゴリパスを更新する関数。
+ * 子コンポーネントから受け取ったカテゴリパスを更新する。
+ *
+ * @param {Array} path - 子コンポーネントから受け取ったカテゴリパスを保持する配列
+ */
+const handleCategoryPathUpdate = (path) => {
+    categoryPath.value = path;
+};
+
+/**
+ * カテゴリパスを監視し、最下層のカテゴリIDをフォームに設定する。
+ */
 watch(categoryPath, (newValue, oldValue) => {
     if (newValue.length > 0) {
         const lastCategory = newValue[newValue.length - 1];
         props.form.category_id = lastCategory.id; // 最下層のカテゴリIDをform.category_idに設定
     }
 }, { deep: true });
-
-const handleCategoryPathUpdate = (path) => {
-    categoryPath.value = path; // 子コンポーネントから受け取ったカテゴリパスを更新
-};
 </script>
 
 <template>
@@ -75,14 +106,14 @@ const handleCategoryPathUpdate = (path) => {
                             </svg>
                         </li>
                     </ol>
-                    <p class="mt-2 flex items-center"><a class="cursor-pointer text-sm text-indigo-600 underline underline-offset-2 decoration-indigo-600 hover:opacity-80" @click="confirmUserDeletion">変更する</a>
+                    <p class="mt-2 flex items-center"><a class="cursor-pointer text-sm text-indigo-600 underline underline-offset-2 decoration-indigo-600 hover:opacity-80" @click="categorySelection">変更する</a>
                         <svg class="flex-shrink-0 mx-2 overflow-visible h-4 w-4 text-indigo-600" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <polygon points="16 3 21 8 8 21 3 21 3 16 16 3"></polygon>
                         </svg>
                     </p>
                 </div>
                 <div v-show="!(form.category_id)">
-                    <button type="button" class="mt-2 py-3 px-4 inline-flex items-center gap-x-1 text-xs font-medium rounded-full border border-dashed border-gray-200 bg-white text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500" @click="confirmUserDeletion">
+                    <button type="button" class="mt-2 py-3 px-4 inline-flex items-center gap-x-1 text-xs font-medium rounded-full border border-dashed border-gray-200 bg-white text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500" @click="categorySelection">
                         <svg class="flex-shrink-0 w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M5 12h14" />
                             <path d="M12 5v14" />
@@ -91,8 +122,6 @@ const handleCategoryPathUpdate = (path) => {
                     </button>
                 </div>
             </div>
-
-
 
             <div>
                 <InputLabel for="brand" value="ブランド" />
@@ -116,6 +145,6 @@ const handleCategoryPathUpdate = (path) => {
                 <PriceInput id="price" type="text" class="mt-1 w-full" v-model="form.price" />
             </div>
         </div>
-        <ShowCategoryForm :show="confirmingUserDeletion" @close="closeModal" :categories="categories" @update:categoryPath="handleCategoryPathUpdate" />
+        <ShowCategoryForm :show="categoryFormButton" @close="closeModal" :categories="categories" @update:categoryPath="handleCategoryPathUpdate" />
     </section>
 </template>

@@ -1,21 +1,33 @@
 <script setup>
+/**
+ * @requires ref - リアクティブなデータ参照を作成するために使用
+ * @requires watch - Vue 3のリアクティブなデータを監視するための関数
+ */
 import { ref, watch } from 'vue';
 
+/**
+ * コンポーネントのプロパティ定義。
+ *
+ * @property {Object} formFile - 商品画像のファイルオブジェクト
+ */
 const props = defineProps({
     formFile: Object,
 });
 
+/**
+ * @requires defineEmits - カスタムイベントを定義するための関数
+ */
 const emit = defineEmits(['update:formFile']);
 
 /**
- * プロフィール画像のプレビュー用のURLを提供するリアクティブなプロパティ。
+ * 商品画像のプレビュー用のURLを提供するリアクティブなプロパティ。
  *
  *  @type {string} - プロフィール画像のファイルパス
  */
 let itemImages = ref(null);
 
 /**
- * ファイル選択時に呼び出され、画像プレビューを更新する。
+ * ファイル選択時に呼び出され、商品画像プレビューを更新する。
  *
  * @param {Event} event - ファイル入力イベント
  */
@@ -25,12 +37,16 @@ const handleFileChange = (event) => {
         const reader = new FileReader();
         reader.onload = (e) => {
             itemImages.value = e.target.result;
-            emit('update:formFile', file); // ここでカスタムイベントを発火
+            emit('update:formFile', file); // ここで親コンポーネントにファイルを更新するイベントを送信
         };
         reader.readAsDataURL(file);
     }
 };
 
+/**
+ * 親コンポーネントのプロパティを監視し、商品画像のファイルがクリアされたら画像プレビューもクリアする。
+ * 商品登録後のページリダイレクト時にファイルがクリアされた場合に画像プレビューもクリアするための処理。
+ */
 watch(() => props.formFile, (newVal) => {
     if (Array.isArray(newVal) && newVal.length === 0) {
         itemImages.value = null; // ファイルがクリアされたら画像プレビューもクリア
