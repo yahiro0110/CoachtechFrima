@@ -4,7 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreItemRequest;
 use App\Http\Requests\UpdateItemRequest;
+use App\Models\Category;
+use App\Models\Condition;
 use App\Models\Item;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Redirect;
+use Inertia\Inertia;
 
 class ItemController extends Controller
 {
@@ -25,7 +32,13 @@ class ItemController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render(
+            'Items/Create',
+            [
+                'categories' => Category::select('id', 'name', 'parent_id')->get(),
+                'conditions' => Condition::select('id', 'name')->get(),
+            ]
+        );
     }
 
     /**
@@ -36,7 +49,25 @@ class ItemController extends Controller
      */
     public function store(StoreItemRequest $request)
     {
-        //
+        // if ($request->file('file')) {
+        //     // 新しいファイル名を生成し、ファイルを保存
+        //     $file_name = date('Ymd') . Str::random(15) . '_' . $request->file('file')->getClientOriginalName();
+        //     $request->file('file')->storeAs('public/images', $file_name);
+        // } else {
+        //     $file_name = null;
+        // }
+
+        Item::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'condition_id' => $request->condition_id,
+            'price' => $request->price,
+            'brand' => $request->brand,
+            'seller_id' => Auth::id(),
+            'category_id' => $request->category_id,
+        ]);
+
+        return Redirect::route('items.create');
     }
 
     /**

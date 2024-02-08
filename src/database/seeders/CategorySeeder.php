@@ -271,6 +271,22 @@ class CategorySeeder extends Seeder
                 'name' => 'ドラム',
                 'parent_id' => 21,
             ],
+            [
+                'name' => 'バット',
+                'parent_id' => 60,
+            ],
+            [
+                'name' => 'グローブ',
+                'parent_id' => 60,
+            ],
+            [
+                'name' => 'ボール',
+                'parent_id' => 60,
+            ],
+            [
+                'name' => 'ラケット',
+                'parent_id' => 61,
+            ],
         ];
 
         // 各初期データを挿入する
