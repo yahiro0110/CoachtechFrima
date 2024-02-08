@@ -5,7 +5,7 @@ import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/inertia-vue3';
+import { Link, usePage } from '@inertiajs/inertia-vue3';
 import { Inertia } from '@inertiajs/inertia'
 
 const showingNavigationDropdown = ref(false);
@@ -13,6 +13,13 @@ const showingNavigationDropdown = ref(false);
 const navigateToCreateItem = () => {
     Inertia.visit(route('items.create'));
 }
+
+/**
+ * プロフィール画像のプレビュー用のURLを提供するリアクティブなプロパティ。
+ *
+ *  @type {string} - プロフィール画像のファイルパス
+ */
+let userIcon = usePage().props.value.auth.userImage ? ref('/storage/images/users/' + usePage().props.value.auth.userImage) : ref('/storage/images/users/default.jpg');
 </script>
 
 <template>
@@ -34,6 +41,7 @@ const navigateToCreateItem = () => {
                         <div class="ml-3 relative">
                             <Dropdown align="right" width="48">
                                 <template #trigger>
+                                    <img class="inline-block h-[2rem] w-[2rem] rounded-full object-cover m-2" :src="userIcon" alt="Image Description">
                                     <span class="inline-flex rounded-md">
                                         <button type="button" class="inline-flex items-center mr-5 border border-transparent text-sm leading-4 font-medium rounded-md text-light focus:outline-none transition ease-in-out duration-150">
                                             {{ $page.props.auth.user.name }}
