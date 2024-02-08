@@ -50,6 +50,7 @@ class ItemController extends Controller
      */
     public function store(StoreItemRequest $request)
     {
+        // 商品情報をデータベースに保存
         $item = Item::create([
             'name' => $request->name,
             'description' => $request->description,
@@ -60,15 +61,19 @@ class ItemController extends Controller
             'category_id' => $request->category_id,
         ]);
 
-        if ($request->file('file')) {
-            // 新しいファイル名を生成し、ファイルを保存
-            $file_name = date('Ymd') . Str::random(15) . '_' . $request->file('file')->getClientOriginalName();
-            $request->file('file')->storeAs('public/images/items', $file_name);
-            // データベースに保存
-            ItemImage::create([
-                'item_id' => $item->id,
-                'image_path' => $file_name,
-            ]);
+        // 複数ファイルのアップロードを処理
+        if ($request->hasFile('files')) {
+            foreach ($request->file('files') as $file) {
+                // 新しいファイル名を生成し、ファイルを保存
+                $file_name = date('Ymd') . Str::random(15) . '_' . $file->getClientOriginalName();
+                $file->storeAs('public/images/items', $file_name);
+
+                // データベースに保存
+                ItemImage::create([
+                    'item_id' => $item->id,
+                    'image_path' => $file_name,
+                ]);
+            }
         }
 
         return Redirect::route('items.create');

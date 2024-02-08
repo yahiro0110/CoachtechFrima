@@ -12,6 +12,7 @@ import StoreItemImagesForm from '@/Pages/Items/Partials/StoreItemImagesForm.vue'
 import StoreItemDetailForm from '@/Pages/Items/Partials/StoreItemDetailForm.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import { Head, useForm } from '@inertiajs/inertia-vue3';
+import { ref } from 'vue';
 
 /**
  * コンポーネントのプロパティ定義。
@@ -43,17 +44,15 @@ const form = useForm({
     condition_id: null,
     description: null,
     price: null,
-    file: [],
+    files: [],
 });
 
 /**
- * 商品画像のアップロードを監視し、ファイルを更新する関数。
+ * 商品画像をアップロードするためのフォームコンポーネントの参照。
  *
- * @param {File} file - 商品画像ファイル
+ * @type {Object} imagesFormRef - 商品画像をアップロードするためのフォームコンポーネントの参照
  */
-const handleFileUpdate = (file) => {
-    form.file = file;
-};
+const imagesFormRef = ref(null);
 
 /**
  * 商品情報を登録する関数。
@@ -64,6 +63,9 @@ const handleFileUpdate = (file) => {
  * `onSuccess`はフォーム送信成功時に実行されるコールバック関数で、`form.recentlySuccessful`をtrueに設定する。
  */
 const StoreItem = () => {
+    // imagesFormRef からファイルリストを取得
+    form.files = imagesFormRef.value.getSelectedFiles();
+
     form.post(route('items.store'), {
         preserveScroll: true,
         onSuccess: () => {
@@ -86,7 +88,7 @@ const StoreItem = () => {
             <div class="py-12">
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                     <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                        <StoreItemImagesForm class="mx-auto" :formFile="form.file" @update:formFile="handleFileUpdate" />
+                        <StoreItemImagesForm class="mx-auto" ref="imagesFormRef" :formFiles="form.files" />
                     </div>
 
                     <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">

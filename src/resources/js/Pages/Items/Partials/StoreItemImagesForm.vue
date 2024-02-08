@@ -8,23 +8,25 @@ import { ref, watch } from 'vue';
 /**
  * コンポーネントのプロパティ定義。
  *
- * @property {Object} formFile - 商品画像のファイルオブジェクト
+ * @property {Object} formFiles - 商品画像のファイルオブジェクト、ページリダイレクト時にファイルがクリアされた場合に画像プレビューもクリアするために使用
  */
 const props = defineProps({
-    formFile: Object,
+    formFiles: Array,
 });
 
 /**
  * @requires defineEmits - カスタムイベントを定義するための関数
  */
-const emit = defineEmits(['update:formFile']);
+const emit = defineEmits(['update:formFile', 'handleFilesUpdate']);
 
 /**
- * 商品画像のプレビュー用のURLを提供するリアクティブなプロパティ。
+ * リアクティブプロパティの定義。
  *
- *  @type {string} - プロフィール画像のファイルパス
+ * @property {Array} itemImages - 商品画像のプレビューを表示するための配列
+ * @property {Array} selectedFiles - 商品画像のファイルを保持するための配列
  */
-let itemImages = ref(null);
+let itemImages = ref([]);
+let selectedFiles = ref([]);
 
 /**
  * ファイル選択時に呼び出され、商品画像プレビューを更新する。
@@ -32,24 +34,49 @@ let itemImages = ref(null);
  * @param {Event} event - ファイル入力イベント
  */
 const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
+    const newFiles = Array.from(event.target.files);
+    itemImages.value = []; // リセット
+    selectedFiles.value = []; // リセット
+    newFiles.forEach((file) => {
         const reader = new FileReader();
         reader.onload = (e) => {
-            itemImages.value = e.target.result;
-            emit('update:formFile', file); // ここで親コンポーネントにファイルを更新するイベントを送信
+            itemImages.value.push(e.target.result);
+            selectedFiles.value.push(file);
         };
         reader.readAsDataURL(file);
-    }
+    });
 };
+
+/**
+ * 選択された商品画像を削除する。
+ *
+ * @param {Number} index - 削除する商品画像のインデックス
+ */
+const removeImage = (index) => {
+    itemImages.value.splice(index, 1);
+    selectedFiles.value.splice(index, 1);
+};
+
+/**
+ * 選択された商品画像のファイルを親コンポーネントに渡す関数。
+ * 親コンポーネントで特定のイベントが発生したときに呼び出される。
+ *
+ * @returns {Array} - 選択された商品画像のファイルを含む配列
+ */
+function getSelectedFiles() {
+    return selectedFiles.value;
+}
+
+// `getSelectedFiles`メソッドを親コンポーネントに公開する
+defineExpose({ getSelectedFiles });
 
 /**
  * 親コンポーネントのプロパティを監視し、商品画像のファイルがクリアされたら画像プレビューもクリアする。
  * 商品登録後のページリダイレクト時にファイルがクリアされた場合に画像プレビューもクリアするための処理。
  */
-watch(() => props.formFile, (newVal) => {
+watch(() => props.formFiles, (newVal) => {
     if (Array.isArray(newVal) && newVal.length === 0) {
-        itemImages.value = null; // ファイルがクリアされたら画像プレビューもクリア
+        itemImages.value = []; // ファイルがクリアされたら画像プレビューもクリア
     }
 }, { immediate: true });
 </script>
@@ -64,7 +91,10 @@ watch(() => props.formFile, (newVal) => {
             </p>
         </header>
 
-        <img class="inline-block h-[8rem] w-[8rem] rounded-full object-cover" v-show="itemImages" :src="itemImages" alt="Image Description">
+        <div v-for="(image, index) in itemImages" :key="index" class="inline-block relative">
+            <img class="h-[8rem] w-[8rem] rounded-full object-cover" :src="image" alt="Image Description">
+            <button class="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full" @click.prevent="removeImage(index)">削除</button>
+        </div>
 
         <div class="col-span-full">
             <div class="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
@@ -75,7 +105,7 @@ watch(() => props.formFile, (newVal) => {
                     <div class="mt-4 flex flex-col text-sm leading-6 text-gray-600">
                         <label for="file-upload" class="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500">
                             <span>画像をアップロード</span>
-                            <input id="file-upload" name="file-upload" type="file" class="sr-only" ref="file" @change="handleFileChange" @input="formFile = $event.target.files[0]" />
+                            <input id="file-upload" name="file-upload" type="file" multiple class="sr-only" ref="file" @change="handleFileChange" @input="formFile = $event.target.files[0]" />
                         </label>
                         <p class="hidden pl-1 md:block">またはこちらにドラッグ&ドロップしてください</p>
                     </div>
