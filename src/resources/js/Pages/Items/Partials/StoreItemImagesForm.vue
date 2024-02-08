@@ -91,9 +91,16 @@ watch(() => props.formFiles, (newVal) => {
             </p>
         </header>
 
-        <div v-for="(image, index) in itemImages" :key="index" class="inline-block relative">
-            <img class="h-[8rem] w-[8rem] rounded-full object-cover" :src="image" alt="Image Description">
-            <button class="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full" @click.prevent="removeImage(index)">削除</button>
+        <div class="sm:flex sm:justify-between md:grid md:grid-cols-5 md:gap-4">
+            <div v-for="(image, index) in itemImages" :key="index" class="inline-block relative">
+                <img class="h-[10rem] w-[10rem] rounded-s object-cover m-2" :src="image" alt="Image Description">
+                <button class="absolute top-0 right-0 bg-black hover:bg-red-500 text-white p-1 m-1 rounded-full bg-opacity-40 hover:bg-opacity-80" @click.prevent="removeImage(index)">
+                    <svg class="flex-shrink-0 w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 6 6 18" />
+                        <path d="m6 6 12 12" />
+                    </svg>
+                </button>
+            </div>
         </div>
 
         <div class="col-span-full">
