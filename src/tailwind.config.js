@@ -23,7 +23,7 @@ module.exports = {
                 'success': '#10B981',
                 'warning': '#F59E0B',
                 'info': '#3B82F6',
-                'dark': '#111827',
+                'dark': '#181818',
                 'light': '#F9FAFB',
             },
         },

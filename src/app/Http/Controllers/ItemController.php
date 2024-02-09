@@ -98,7 +98,14 @@ class ItemController extends Controller
      */
     public function show(Item $item)
     {
-        //
+        return Inertia::render(
+            'Items/Show',
+            [
+                'item' => Item::with('itemImages')->findOrFail($item->id),
+                'categories' => Category::select('id', 'name', 'parent_id')->get(),
+                'conditions' => Condition::select('id', 'name')->get(),
+            ]
+        );
     }
 
     /**

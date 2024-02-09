@@ -1,0 +1,63 @@
+<script setup>
+/**
+ * @requires Modal - モーダルダイアログを表示するためのコンポーネント
+ * @requires ref - リアクティブなデータ参照を作成するために使用
+ * @requires computed - Vue 3の算出プロパティを作成するために使用
+ */
+import Modal from '@/Components/Modal.vue';
+import { computed } from 'vue';
+
+/**
+ * コンポーネントのプロパティ定義。
+ *
+ * @property {Array} categories - 商品カテゴリーの一覧を含む配列
+ */
+const props = defineProps({
+    item: Object,
+    categoryPath: String,
+    conditionName: String,
+    formattedPrices: String,
+});
+
+// 改行を<br>タグに置き換えるcomputedプロパティ
+const formattedDescription = computed(() => {
+    return props.item.description ? props.item.description.replace(/\n/g, '<br>') : '特になし';
+});
+</script>
+
+<template>
+    <div class="mt-10 flex flex-col sm:w-full md:w-full 2xl:w-1/2 px-7 md:px-20 mx-auto">
+        <div class="md:flex md:justify-between md:items-start">
+            <div class="md:w-1/2">
+                <h2 class="tracking-widest text-sm title-font font-medium text-light mb-1">{{ item.brand ?? '-' }}</h2>
+                <h1 class="sm:text-3xl text-2xl font-medium title-font text-light lg:mb-0 mb-4">{{ item.name }}</h1>
+
+                <div class="mt-10">
+                    <h1 class="text-lg md:text-2xl font-medium title-font text-gray-500 mb-4">商品の説明</h1>
+                    <p class="mx-auto leading-relaxed text-base" v-html="formattedDescription" :class="{ 'text-light': item.description }"></p>
+                </div>
+
+                <div class="mt-10">
+                    <h1 class="text-lg md:text-2xl font-medium title-font text-gray-500 mb-4">商品の情報</h1>
+
+                    <div class="md:grid md:grid-cols-2 md:gap-2 md:w-full">
+                        <p class="leading-relaxed text-sm text-light font-bold mb-1 md:mb-0">カテゴリ</p>
+                        <p class="leading-relaxed text-sm text-light mb-3 md:mb-0">{{ categoryPath }}</p>
+                        <p class="leading-relaxed text-sm text-light font-bold mb-1 md:mb-0">商品の状態</p>
+                        <p class="leading-relaxed text-sm text-light">{{ conditionName }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="lg:w-2/6 md:w-1/2 bg-dark rounded-lg p-8 flex flex-col md:ml-auto w-full mt-10 md:mt-0">
+                <h2 class="text-light text-lg font-medium title-font mb-0">販売価格（税込）</h2>
+                <div class="relative mb-4">
+                    <p class="leading-relaxed text-orange-300 text-4xl font-bold"><span class="text-lg">¥ </span>{{ formattedPrices }}</p>
+                </div>
+                <button class="text-light bg-dark border border-gray-700 py-2 px-8 focus:outline-none hover:bg-indigo-500 rounded text-lg">編集する</button>
+                <p class="text-xs text-gray-500 mt-3 mb-3">商品の情報を編集したい場合は、「編集ボタン」を押してください。</p>
+                <button class="text-light bg-dark border border-gray-700 py-2 px-8 focus:outline-none hover:bg-danger rounded text-lg">削除する</button>
+                <p class="text-xs text-gray-500 mt-3">商品を削除したい場合は、「削除ボタン」を押してください。</p>
+            </div>
+        </div>
+    </div>
+</template>
