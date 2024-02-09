@@ -81,7 +81,7 @@ const StoreItem = () => {
                             取引中
                         </a>
                         <a class="py-4 px-1 inline-flex items-center gap-2 border-b-2 border-transparent text-sm focus:font-medium whitespace-nowrap text-gray-500 hover:text-light hover:bg-gray-900 hover:opacity-80  focus:outline-none focus:text-light focus:bg-primary rounded-full" href="#">
-                            販売履歴
+                            売却済
                         </a>
                     </nav>
                 </div>
