@@ -5,7 +5,10 @@
  * @requires computed - Vue 3の算出プロパティを作成するために使用
  */
 import Modal from '@/Components/Modal.vue';
-import { computed } from 'vue';
+import DangerButton from '@/Components/DangerButton.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
+import { computed, ref } from 'vue';
+import { Inertia } from '@inertiajs/inertia';
 
 /**
  * コンポーネントのプロパティ定義。
@@ -23,6 +26,26 @@ const props = defineProps({
 const formattedDescription = computed(() => {
     return props.item.description ? props.item.description.replace(/\n/g, '<br>') : '特になし';
 });
+
+const confirmingItemDeletion = ref(false);
+
+const confirmItemDeletion = () => {
+    confirmingItemDeletion.value = true;
+};
+
+/**
+ * 指定されたユーザーIDに基づいてユーザー情報を削除する関数。
+ * Inertia.jsのdeleteメソッドを使用して、サーバーにHTTP DELETEリクエストを送信する。
+ *
+ * @param {number} id - 削除するユーザーの一意の識別子（ID）
+ */
+const deleteItem = (id) => {
+    Inertia.delete(route('items.destroy', { item: id }));
+};
+
+const closeModal = () => {
+    confirmingItemDeletion.value = false;
+};
 </script>
 
 <template>
@@ -48,6 +71,7 @@ const formattedDescription = computed(() => {
                     </div>
                 </div>
             </div>
+
             <div class="lg:w-2/6 md:w-1/2 bg-dark rounded-lg p-8 flex flex-col md:ml-auto w-full mt-10 md:mt-0">
                 <h2 class="text-light text-lg font-medium title-font mb-0">販売価格（税込）</h2>
                 <div class="relative mb-4">
@@ -55,9 +79,26 @@ const formattedDescription = computed(() => {
                 </div>
                 <button class="text-light bg-dark border border-gray-700 py-2 px-8 focus:outline-none hover:bg-indigo-500 rounded text-lg">編集する</button>
                 <p class="text-xs text-gray-500 mt-3 mb-3">商品の情報を編集したい場合は、「編集ボタン」を押してください。</p>
-                <button class="text-light bg-dark border border-gray-700 py-2 px-8 focus:outline-none hover:bg-danger rounded text-lg">削除する</button>
+                <button class="text-light bg-dark border border-gray-700 py-2 px-8 focus:outline-none hover:bg-danger rounded text-lg" @click="confirmItemDeletion">削除する</button>
                 <p class="text-xs text-gray-500 mt-3">商品を削除したい場合は、「削除ボタン」を押してください。</p>
             </div>
         </div>
+
+        <Modal :show="confirmingItemDeletion" @close="closeModal">
+            <div class="p-6 bg-dark">
+                <h2 class="text-lg font-medium text-light">
+                    本当に商品を削除しますか？
+                </h2>
+
+                <p class="mt-1 text-sm text-light">
+                    商品を削除すると、その商品に紐づくデータが完全に削除されます。問題なければ、「商品を削除する」ボタンを押してください。
+                </p>
+
+                <div class="mt-6 flex justify-end">
+                    <SecondaryButton @click="closeModal"> 削除を止める </SecondaryButton>
+                    <DangerButton class="ml-3" @click="deleteItem(item.id)"> 商品を削除する </DangerButton>
+                </div>
+            </div>
+        </Modal>
     </div>
 </template>

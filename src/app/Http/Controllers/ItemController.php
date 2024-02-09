@@ -139,6 +139,18 @@ class ItemController extends Controller
      */
     public function destroy(Item $item)
     {
-        //
+        try {
+            $item->delete();
+
+            return to_route('items.index')->with([
+                'message' => '商品を削除しました。',
+                'status' => 'success',
+            ]);
+        } catch (\Exception $e) {
+            return to_route('items.index')->with([
+                'message' => '商品の削除に失敗しました。',
+                'status' => 'warning',
+            ]);
+        }
     }
 }

@@ -8,6 +8,7 @@
  * @requires useForm - Inertia.jsのフォームハンドリング機能を提供し、フォームの状態管理や送信時の処理を容易にする
  */
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import FlashMessage from '@/Components/FlashMessage.vue';
 import StoreItemImagesForm from '@/Pages/Items/Partials/StoreItemImagesForm.vue';
 import StoreItemDetailForm from '@/Pages/Items/Partials/StoreItemDetailForm.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
@@ -65,6 +66,8 @@ const StoreItem = () => {
         <template #header>
             <h2 class="font-semibold text-xl text-light leading-tight text-center">商品した商品</h2>
         </template>
+
+        <FlashMessage />
 
         <section class="text-gray-600 body-font">
             <!-- navigation area -->
