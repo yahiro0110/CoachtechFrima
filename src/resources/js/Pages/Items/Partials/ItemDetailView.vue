@@ -63,10 +63,13 @@ const closeModal = () => {
                 <div class="mt-10">
                     <h1 class="text-lg md:text-2xl font-medium title-font text-gray-500 mb-4">商品の情報</h1>
 
-                    <div class="md:grid md:grid-cols-2 md:gap-2 md:w-2/3">
-                        <p class="leading-relaxed text-sm text-light font-bold mb-1 md:mb-0">カテゴリ</p>
+                    <div class="md:flex">
+                        <p class="leading-relaxed text-sm text-light font-bold mb-1 md:mb-2 md:mr-24">カテゴリ</p>
                         <p class="leading-relaxed text-sm text-light mb-3 md:mb-0">{{ categoryPath }}</p>
-                        <p class="leading-relaxed text-sm text-light font-bold mb-1 md:mb-0">商品の状態</p>
+                    </div>
+
+                    <div class="md:flex">
+                        <p class="leading-relaxed text-sm text-light font-bold mb-1 md:mb-2 md:mr-20">商品の状態</p>
                         <p class="leading-relaxed text-sm text-light">{{ conditionName }}</p>
                     </div>
                 </div>
