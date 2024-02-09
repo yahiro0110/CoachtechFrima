@@ -12,6 +12,7 @@ import GalleryView from '@/Pages/Items/Partials/GalleryView.vue';
 import ItemDetailView from '@/Pages/Items/Partials/ItemDetailView.vue';
 import { Head } from '@inertiajs/inertia-vue3';
 import { computed } from 'vue';
+import { Inertia } from '@inertiajs/inertia';
 
 /**
  * コンポーネントのプロパティ定義。
@@ -82,7 +83,7 @@ const StoreItem = () => {
  * ユーザーを前のページに戻す関数。
  */
 const goBack = () => {
-    window.history.back();
+    Inertia.get(route('items.index'));
 }
 </script>
 
