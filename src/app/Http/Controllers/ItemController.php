@@ -23,7 +23,18 @@ class ItemController extends Controller
      */
     public function index()
     {
-        //
+        $userId = Auth::id();
+        return Inertia::render(
+            'Items/Index',
+            [
+                'items' => Item::select('id', 'name', 'brand', 'price')
+                    ->where('seller_id', $userId)
+                    ->with('itemImages')
+                    ->get(),
+                'categories' => Category::select('id', 'name', 'parent_id')->get(),
+                'conditions' => Condition::select('id', 'name')->get(),
+            ]
+        );
     }
 
     /**
