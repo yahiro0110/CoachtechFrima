@@ -47,9 +47,7 @@ let userIcon = usePage().props.value.auth.userImage ? ref('/storage/images/users
                                 <template #content>
                                     <DropdownLink :href="route('profile.edit')"> プロフィール設定 </DropdownLink>
                                     <DropdownLink :href="route('items.create')"> 出品する </DropdownLink>
-                                    <DropdownLink :href="route('logout')" method="post" as="button">
-                                        ログアウト
-                                    </DropdownLink>
+                                    <DropdownLink :href="route('logout')" method="post" as="button"> ログアウト </DropdownLink>
                                 </template>
                             </Dropdown>
                         </div>
@@ -72,9 +70,8 @@ let userIcon = usePage().props.value.auth.userImage ? ref('/storage/images/users
 
                                 <template #content>
                                     <DropdownLink :href="route('profile.edit')"> プロフィール設定 </DropdownLink>
-                                    <DropdownLink :href="route('logout')" method="post" as="button">
-                                        ログアウト
-                                    </DropdownLink>
+                                    <DropdownLink :href="route('items.index')"> 出品履歴 </DropdownLink>
+                                    <DropdownLink :href="route('logout')" method="post" as="button"> ログアウト </DropdownLink>
                                 </template>
                             </Dropdown>
                         </div>

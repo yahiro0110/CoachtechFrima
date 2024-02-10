@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreItemRequest extends FormRequest
+class UpdateItemDetailRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +24,6 @@ class StoreItemRequest extends FormRequest
     public function rules()
     {
         return [
-            'files' => ['required', 'array'],
-            'files.*' => ['image', 'mimes:jpeg,png,jpg', 'max:5000'],
             'name' => ['required', 'string', 'max:40'],
             'category_id' => ['required', 'integer'],
             'brand' => ['nullable', 'string', 'max:20'],
@@ -38,11 +36,6 @@ class StoreItemRequest extends FormRequest
     public function messages()
     {
         return [
-            'files.required' => '少なくとも画像ファイルを1つ選択してください',
-            'files.*.image' => '全てのファイルは画像である必要があります',
-            'files.*.mimes' => '画像はjpeg, png, jpg形式である必要があります',
-            'files.*.max' => '画像のサイズは5MB以下にしてください',
-
             'name.required' => '商品名は必須です',
             'name.string' => '商品名は文字列で入力してください',
             'name.max' => '商品名は40文字以内で入力してください',
