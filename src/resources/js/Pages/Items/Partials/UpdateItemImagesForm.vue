@@ -11,7 +11,7 @@ import { computed, ref } from 'vue';
 /**
  * コンポーネントのプロパティ定義。
  *
- * @property {Object} form - 商品情報の登録に必要なデータを保持するフォームオブジェクト
+ * @property {Object} item - 商品の情報を含むオブジェクト(商品画像を含む)
  */
 const props = defineProps({
     item: Object,
@@ -32,7 +32,7 @@ const form = useForm({
 /**
  * リアクティブプロパティの定義。
  *
- * @property {Array} itemImages - 商品画像のプレビューを表示するための配列
+ * @property {Array} newItemImages - 商品画像(新規)のプレビューを表示するための配列
  * @property {Array} selectedFiles - 商品画像のファイルを保持するための配列
  */
 let newItemImages = ref([]);
@@ -78,7 +78,7 @@ const handleDrop = (event) => {
 };
 
 /**
- * 選択された商品画像（既存）を削除する。
+ * 表示された商品画像（既存）を削除する。
  *
  * @param {Number} index - 削除する商品画像のインデックス
  */
@@ -122,10 +122,7 @@ const filesErrorMessage = computed(() => {
  *
  * Inertia.jsのpostメソッドを使用して、フォームに入力されたデータをサーバーに送信する。
  * 送信前に、transformメソッドを使用してフォームのFilesオブジェクトを更新する。
- * 成功時にはフォームの送信状態を更新し、エラー時にはエラーメッセージを表示するための処理が含まれる。
- * `preserveScroll`はページ遷移後のスクロール位置維持に使用している。
- * `onSuccess`はフォーム送信成功時に実行されるコールバック関数で、`form.recentlySuccessful`をtrueに設定する。
- * また、`form.itemImages`を最新化し、`newItemImages`と`selectedFiles`をリセットする。
+ * 成功またはエラー時にはフォームの送信状態を更新するための処理等が含まれる。
  */
 const updateImagesInformation = (id) => {
     form
@@ -135,12 +132,20 @@ const updateImagesInformation = (id) => {
             files: selectedFiles.value.length > 0 ? selectedFiles.value : null,
         }))
         .post(route('items.images.update', { item: id }), {
+            // ページ遷移後のスクロールを位置維持
             preserveScroll: true,
             onSuccess: () => {
+                // フォーム送信成功時の処理
                 form.recentlySuccessful = true;
+                // フォームの商品の画像パスを最新化（リダイレクト後、自動で同期されないので処置を追加）
                 form.itemImages = props.item.item_images;
+                // 新規商品画像のプレビューおよび選択ファイルをリセット
                 newItemImages.value = [];
                 selectedFiles.value = [];
+            },
+            onError: () => {
+                // フォームの商品の画像パスを最新化（バリデーションエラー時に、自動で同期されないので処置を追加）
+                form.itemImages = props.item.item_images;
             },
         });
 };
@@ -154,6 +159,7 @@ const updateImagesInformation = (id) => {
             <p class="mt-1 mb-5 text-sm text-gray-600">
                 商品画像を登録してください。
             </p>
+            <InputError class="mt-2" :message="form.errors.itemImages" />
             <InputError class="mt-2" :message="filesErrorMessage" />
         </header>
 

@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreItemRequest;
-use App\Http\Requests\UpdateItemRequest;
+use App\Http\Requests\UpdateItemDetailRequest;
+use App\Http\Requests\UpdateItemImagesRequest;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Condition;
@@ -133,11 +134,11 @@ class ItemController extends Controller
      * 指定された商品の名前、カテゴリID、ブランド、状態ID、説明、および価格を更新する。
      * 更新が完了した後、商品の編集ページへリダイレクトする。
      *
-     * @param \Illuminate\Http\Request $request HTTPリクエストインスタンス、更新する商品情報（名前、カテゴリID、ブランド、状態ID、説明、価格）を含む
+     * @param \App\Http\Requests\UpdateItemDetailRequest $request HTTPリクエストインスタンス、更新する商品情報（名前、カテゴリID、ブランド、状態ID、説明、価格）を含む
      * @param \App\Models\Item $item 更新する対象の商品モデルインスタンス
      * @return \Illuminate\Http\RedirectResponse 商品の編集ページへのリダイレクトレスポンス
      */
-    public function updateDetail(Request $request, Item $item)
+    public function updateDetail(UpdateItemDetailRequest $request, Item $item)
     {
         $item->update($request->only(['name', 'category_id', 'brand', 'condition_id', 'description', 'price']));
 
@@ -151,11 +152,11 @@ class ItemController extends Controller
      * 次に、新しくアップロードされたファイルを保存し、それらの情報をデータベースに記録する。
      * 更新が完了した後、商品の編集ページへリダイレクトする。
      *
-     * @param \Illuminate\Http\Request $request HTTPリクエストインスタンス、アップロードされたファイルや画像IDの配列を含む
+     * @param \App\Http\Requests\UpdateItemImagesRequest $request HTTPリクエストインスタンス、アップロードされたファイルや画像IDの配列を含む
      * @param \App\Models\Item $item 画像を更新する対象の商品モデルインスタンス
      * @return \Illuminate\Http\RedirectResponse 商品の編集ページへのリダイレクトレスポンス
      */
-    public function updateImages(Request $request, Item $item)
+    public function updateImages(UpdateItemImagesRequest $request, Item $item)
     {
         // 既存の画像を削除
         // $request->itemImagesから、提出された画像IDの配列を取得する。
