@@ -28,7 +28,7 @@ Route::get('/', function () {
 
 Route::resource('items', ItemController::class)->middleware('auth', 'verified');
 Route::put('/items/{item}/detail', [ItemController::class, 'updateDetail'])->name('items.detail.update')->middleware('auth', 'verified');
-Route::post('/items/{item}/images', [ItemController::class, 'updateImage'])->name('items.images.update')->middleware('auth', 'verified');
+Route::post('/items/{item}/images', [ItemController::class, 'updateImages'])->name('items.images.update')->middleware('auth', 'verified');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');

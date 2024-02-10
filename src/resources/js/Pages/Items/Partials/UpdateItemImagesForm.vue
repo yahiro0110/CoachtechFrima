@@ -5,7 +5,8 @@
  */
 import InputError from '@/Components/InputError.vue';
 import { useForm } from '@inertiajs/inertia-vue3';
-import { computed, ref, watch } from 'vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import { computed, ref } from 'vue';
 
 /**
  * コンポーネントのプロパティ定義。
@@ -20,21 +21,10 @@ const props = defineProps({
  * 商品情報入力フォームのデータモデル。
  *
  * @type {Object} form - アカウント情報の登録に必要なデータを保持するフォームオブジェクト
- * @property {String} name - 商品名
- * @property {Number} category_id - 商品カテゴリーのID
- * @property {String} brand - ブランド名
- * @property {Number} condition_id - 商品の状態のID
- * @property {String} description - 商品の説明
- * @property {Number} price - 商品の価格
- * @property {Array} file - 商品の画像ファイル
+ * @property {Array} itemImages - 商品の画像パス（既存）
+ * @property {Array} file - 商品の画像ファイル（新規）
  */
 const form = useForm({
-    name: props.item.name,
-    category_id: props.item.category_id,
-    brand: props.item.brand,
-    condition_id: props.item.condition_id,
-    description: props.item.description,
-    price: props.item.price,
     itemImages: props.item.item_images,
     files: [],
 });
@@ -88,7 +78,16 @@ const handleDrop = (event) => {
 };
 
 /**
- * 選択された商品画像を削除する。
+ * 選択された商品画像（既存）を削除する。
+ *
+ * @param {Number} index - 削除する商品画像のインデックス
+ */
+const removeOldImage = (index) => {
+    form.itemImages.splice(index, 1);
+};
+
+/**
+ * 選択された商品画像（新規）を削除する。
  *
  * @param {Number} index - 削除する商品画像のインデックス
  */
@@ -96,19 +95,6 @@ const removeImage = (index) => {
     newItemImages.value.splice(index, 1);
     selectedFiles.value.splice(index, 1);
 };
-
-/**
- * 選択された商品画像のファイルを親コンポーネントに渡す関数。
- * 親コンポーネントで特定のイベントが発生したときに呼び出される。
- *
- * @returns {Array} - 選択された商品画像のファイルを含む配列
- */
-function getSelectedFiles() {
-    return selectedFiles.value;
-}
-
-// `getSelectedFiles`メソッドを親コンポーネントに公開する
-defineExpose({ getSelectedFiles });
 
 /**
  * 商品画像のエラーメッセージを集約する。
@@ -132,20 +118,31 @@ const filesErrorMessage = computed(() => {
 });
 
 /**
- * プロフィール情報を更新する関数。
+ * 商品の画像を更新する関数。
  *
- * Inertia.jsのpatchメソッドを使用して、フォームに入力されたデータをサーバーに送信する。
+ * Inertia.jsのpostメソッドを使用して、フォームに入力されたデータをサーバーに送信する。
+ * 送信前に、transformメソッドを使用してフォームのFilesオブジェクトを更新する。
  * 成功時にはフォームの送信状態を更新し、エラー時にはエラーメッセージを表示するための処理が含まれる。
- * `preserveScroll`はページ遷移後のスクロール位置維持に使用。
+ * `preserveScroll`はページ遷移後のスクロール位置維持に使用している。
  * `onSuccess`はフォーム送信成功時に実行されるコールバック関数で、`form.recentlySuccessful`をtrueに設定する。
+ * また、`form.itemImages`を最新化し、`newItemImages`と`selectedFiles`をリセットする。
  */
-const updateImagesInformation = () => {
-    form.patch(route('items.updateImages'), {
-        preserveScroll: true,
-        onSuccess: () => {
-            form.recentlySuccessful = true;
-        },
-    });
+const updateImagesInformation = (id) => {
+    form
+        .transform((data) => ({
+            ...data,
+            // 画像ファイル（新規）が選択されていない場合は、nullを送信する
+            files: selectedFiles.value.length > 0 ? selectedFiles.value : null,
+        }))
+        .post(route('items.images.update', { item: id }), {
+            preserveScroll: true,
+            onSuccess: () => {
+                form.recentlySuccessful = true;
+                form.itemImages = props.item.item_images;
+                newItemImages.value = [];
+                selectedFiles.value = [];
+            },
+        });
 };
 </script>
 
@@ -160,8 +157,29 @@ const updateImagesInformation = () => {
             <InputError class="mt-2" :message="filesErrorMessage" />
         </header>
 
-        <form @submit.prevent="updateImagesInformation" class="mt-6 space-y-6">
-            <div class="sm:flex sm:justify-between md:grid md:grid-cols-5 md:gap-4">
+        <form @submit.prevent="updateImagesInformation(item.id)" class="mt-6 space-y-6">
+
+            <p class="mt-1 text-sm text-gray-600 flex items-center">
+                1. 過去に登録した画像で不要なものがあれば、こちらで削除できます。
+            </p>
+
+            <div class="sm:flex sm:justify-between md:grid md:grid-cols-5 md:gap-4 rounded-lg border border-dashed border-gray-900/25 md:px-6 md:py-10 bg-dark">
+                <div v-for="(image, index) in item.item_images" :key="index" class="inline-block relative">
+                    <img class="h-[10rem] w-[10rem] rounded-s object-cover m-2" :src="'/storage/images/items/' + image.image_path" alt="Image Description">
+                    <button class="absolute top-0 right-0 bg-black hover:bg-red-500 text-white p-1 m-1 rounded-full bg-opacity-40 hover:bg-opacity-80" @click.prevent="removeOldImage(index)">
+                        <svg class="flex-shrink-0 w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 6 6 18" />
+                            <path d="m6 6 12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <p class="mt-1 text-sm text-gray-600">
+                2. 新たに登録したい画像があれば選択してください。
+            </p>
+
+            <div v-show="newItemImages.length > 0" class="sm:flex sm:justify-between md:grid md:grid-cols-5 md:gap-4">
                 <div v-for="(image, index) in newItemImages" :key="index" class="inline-block relative">
                     <img class="h-[10rem] w-[10rem] rounded-s object-cover m-2" :src="image" alt="Image Description">
                     <button class="absolute top-0 right-0 bg-black hover:bg-red-500 text-white p-1 m-1 rounded-full bg-opacity-40 hover:bg-opacity-80" @click.prevent="removeImage(index)">
@@ -189,6 +207,14 @@ const updateImagesInformation = () => {
                         <p class="text-xs leading-5 text-gray-600">PNG, JPG, JPEG up to 10MB</p>
                     </div>
                 </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <PrimaryButton :disabled="form.processing">更新</PrimaryButton>
+
+                <Transition enter-from-class="opacity-0" leave-to-class="opacity-0" class="transition ease-in-out">
+                    <p v-if="form.recentlySuccessful" class="text-sm text-gray-600">商品の画像を更新しました。</p>
+                </Transition>
             </div>
         </form>
     </section>
