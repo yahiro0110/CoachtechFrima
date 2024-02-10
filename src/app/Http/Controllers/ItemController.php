@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreItemRequest;
 use App\Http\Requests\UpdateItemRequest;
+use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Condition;
 use App\Models\Item;
@@ -116,7 +117,14 @@ class ItemController extends Controller
      */
     public function edit(Item $item)
     {
-        //
+        return Inertia::render(
+            'Items/Edit',
+            [
+                'item' => Item::with('itemImages')->findOrFail($item->id),
+                'categories' => Category::select('id', 'name', 'parent_id')->get(),
+                'conditions' => Condition::select('id', 'name')->get(),
+            ]
+        );
     }
 
     /**
@@ -126,9 +134,11 @@ class ItemController extends Controller
      * @param  \App\Models\Item  $item
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateItemRequest $request, Item $item)
+    public function updateDetail(Request $request, Item $item)
     {
-        //
+        $item->update($request->only(['name', 'category_id', 'brand', 'condition_id', 'description', 'price']));
+
+        return Redirect::route('items.edit', ['item' => $item->id]);
     }
 
     /**

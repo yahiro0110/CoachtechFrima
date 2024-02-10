@@ -46,6 +46,16 @@ const deleteItem = (id) => {
 const closeModal = () => {
     confirmingItemDeletion.value = false;
 };
+
+/**
+ * 指定されたユーザーIDに基づいてユーザー情報を削除する関数。
+ * Inertia.jsのdeleteメソッドを使用して、サーバーにHTTP DELETEリクエストを送信する。
+ *
+ * @param {number} id - 削除するユーザーの一意の識別子（ID）
+ */
+const showEditForm = (id) => {
+    Inertia.get(route('items.edit', { item: id }));
+};
 </script>
 
 <template>
@@ -80,7 +90,7 @@ const closeModal = () => {
                 <div class="relative mb-4">
                     <p class="leading-relaxed text-orange-300 text-4xl font-bold"><span class="text-lg">¥ </span>{{ formattedPrices }}</p>
                 </div>
-                <button class="text-light bg-dark border border-gray-700 py-2 px-8 focus:outline-none hover:bg-indigo-500 rounded text-lg">編集する</button>
+                <button class="text-light bg-dark border border-gray-700 py-2 px-8 focus:outline-none hover:bg-primary rounded text-lg" @click="showEditForm(item.id)">編集する</button>
                 <p class="text-xs text-gray-500 mt-3 mb-3">商品の情報を編集したい場合は、「編集ボタン」を押してください。</p>
                 <button class="text-light bg-dark border border-gray-700 py-2 px-8 focus:outline-none hover:bg-danger rounded text-lg" @click="confirmItemDeletion">削除する</button>
                 <p class="text-xs text-gray-500 mt-3">商品を削除したい場合は、「削除ボタン」を押してください。</p>
