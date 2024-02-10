@@ -245,7 +245,7 @@ const updateDetailInformation = (id) => {
                 <PrimaryButton :disabled="form.processing">更新</PrimaryButton>
 
                 <Transition enter-from-class="opacity-0" leave-to-class="opacity-0" class="transition ease-in-out">
-                    <p v-if="form.recentlySuccessful" class="text-sm text-gray-600">商品の情報を更新しました。</p>
+                    <p v-if="form.recentlySuccessful" class="text-sm text-danger">商品の情報を更新しました。</p>
                 </Transition>
             </div>
         </form>

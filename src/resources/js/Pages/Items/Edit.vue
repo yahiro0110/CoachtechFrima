@@ -54,7 +54,7 @@ const goBack = (id) => {
                 </div>
 
                 <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                    <h2 class="text-lg font-medium text-gray-900">編集を終了した場合</h2>
+                    <h2 class="text-lg font-medium text-gray-900">編集を終了する場合</h2>
                     <p class="mt-1 mb-5 text-sm text-gray-600">
                         「戻る」ボタンで商品の詳細ページに戻ります。
                     </p>
