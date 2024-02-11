@@ -20,7 +20,7 @@ const navigateToCreateItem = () => {
  *
  *  @type {string} - プロフィール画像のファイルパス
  */
-let userIcon = usePage().props.value.auth.userImage ? ref('/storage/images/users/' + usePage().props.value.auth.userImage) : ref('/storage/images/users/default.jpg');
+let userIcon = usePage().props.value.auth.userImage ? ref('/storage/images/users/' + usePage().props.value.auth.userImage) : ref('/images/default-user-icon.jpg');
 </script>
 
 <template>
