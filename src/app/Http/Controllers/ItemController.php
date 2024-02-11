@@ -23,6 +23,25 @@ class ItemController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function home()
+    {
+        return Inertia::render(
+            'Home',
+            [
+                'items' => Item::select('id', 'name', 'brand', 'seller_id', 'price')
+                    ->with(['itemImages', 'user.userImage'])
+                    ->get(),
+                'categories' => Category::select('id', 'name', 'parent_id')->get(),
+                'conditions' => Condition::select('id', 'name')->get(),
+            ]
+        );
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function index()
     {
         $userId = Auth::id();
