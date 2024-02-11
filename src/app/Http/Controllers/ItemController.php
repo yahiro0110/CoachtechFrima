@@ -30,11 +30,56 @@ class ItemController extends Controller
             [
                 'items' => Item::select('id', 'name', 'brand', 'seller_id', 'price')
                     ->with(['itemImages', 'user.userImage'])
+                    ->withUserAttached(Auth::id())
                     ->get(),
                 'categories' => Category::select('id', 'name', 'parent_id')->get(),
                 'conditions' => Condition::select('id', 'name')->get(),
             ]
         );
+    }
+
+    /**
+     * 指定された商品を現在認証されているユーザーのお気に入りに登録する。
+     *
+     * 登録処理中に例外が発生した場合は、ホームページへリダイレクトし、
+     * エラーメッセージを含む警告通知を表示する。
+     *
+     * @param  \App\Models\Item  $item お気に入りに登録する商品のインスタンス
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector 登録に失敗した場合のリダイレクトレスポンス
+     */
+    public function attachFavorite(Item $item)
+    {
+        try {
+            $item->users()->attach(Auth::id());
+            Redirect::route('home');
+        } catch (\Exception $e) {
+            return to_route('home')->with([
+                'message' => 'お気に入り登録に失敗しました。',
+                'status' => 'warning',
+            ]);
+        }
+    }
+
+    /**
+     * 指定された商品を現在認証されているユーザーのお気に入りリストから削除する。
+     *
+     * 削除処理中に例外が発生した場合は、ホームページへリダイレクトし、
+     * エラーメッセージを含む警告通知を表示する。
+     *
+     * @param  \App\Models\Item  $item お気に入りに登録する商品のインスタンス
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector 削除に失敗した場合のリダイレクトレスポンス
+     */
+    public function detachFavorite(Item $item)
+    {
+        try {
+            $item->users()->detach(Auth::id());
+            Redirect::route('home');
+        } catch (\Exception $e) {
+            return to_route('home')->with([
+                'message' => 'お気に入りからの削除に失敗しました。',
+                'status' => 'warning',
+            ]);
+        }
     }
 
     /**

@@ -5,19 +5,17 @@
  * @requires StoreItemDetailForm - 商品の詳細情報を入力するためのフォームコンポーネント
  * @requires PrimaryButton - プライマリボタンを表示するためのコンポーネント
  * @requires Head - Inertia.jsのヘルパーメソッドを提供し、ページのタイトルやメタ情報を動的に変更する
- * @requires useForm - Inertia.jsのフォームハンドリング機能を提供し、フォームの状態管理や送信時の処理を容易にする
  */
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import FlashMessage from '@/Components/FlashMessage.vue';
-import StoreItemImagesForm from '@/Pages/Items/Partials/StoreItemImagesForm.vue';
-import StoreItemDetailForm from '@/Pages/Items/Partials/StoreItemDetailForm.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
-import { computed, onMounted } from 'vue';
+import { Head, Link } from '@inertiajs/inertia-vue3';
+import { Inertia } from '@inertiajs/inertia';
+import { computed, onMounted, ref } from 'vue';
 
 /**
  * コンポーネントのプロパティ定義。
  *
+ * @property {Array} items - 商品の一覧を含む配列
  * @property {Array} categories - 商品カテゴリーの一覧を含む配列
  * @property {Array} conditions - 商品の状態の一覧を含む配列
  */
@@ -27,55 +25,86 @@ const props = defineProps({
     conditions: Array,
 });
 
-const itemImages = computed(() => {
-    return props.items.map(item => {
-        return '/storage/images/items/' + item.item_images[0].image_path;
-    });
-});
-
-const sellerImages = computed(() => {
-    return props.items.map(item => {
-        return '/storage/images/users/' + item.user.user_image.image_path ?? '/storage/images/users/default.jpg';
-    });
-});
-
 /**
- * 価格のフォーマットを提供する算出プロパティ。
- */
-const formattedPrices = computed(() => {
-    return props.items.map(item => {
-        if (!item.price) return '---';
-        return item.price.toLocaleString();
-    });
-});
-
-/**
- * 商品情報を登録する関数。
+ * リアクティブな商品情報の配列。
+ * propsから取得した商品情報に基づいて初期化され、ユーザーの操作に応じて更新される。
  *
- * Inertia.jsのpostメソッドを使用して、フォームに入力されたデータをサーバーに送信する。
- * 成功時にはフォームの送信状態を更新し、エラー時にはエラーメッセージを表示するための処理が含まれる。
- * `preserveScroll`はページ遷移後のスクロール位置維持に使用。
- * `onSuccess`はフォーム送信成功時に実行されるコールバック関数で、`form.recentlySuccessful`をtrueに設定する。
+ * @type {ref<Array>} - リアクティブな商品情報の配列
  */
-const StoreItem = () => {
-    // imagesFormRef からファイルリストを取得
-    form.files = imagesFormRef.value.getSelectedFiles();
+const reactiveItems = ref([]);
 
-    form.post(route('items.store'), {
-        preserveScroll: true,
-        onSuccess: () => {
-            form.recentlySuccessful = true;
-            form.reset();
-        },
-    });
-};
+/**
+ * コンポーネントがマウントされた際に、propsから取得した店舗情報でreactiveItemsを初期化する。
+ * 各商品オブジェクトに 'liked' プロパティを追加し、ユーザーが商品をお気に入りにしているかどうかを表す。
+ * 'liked' プロパティは、ユーザーが商品をお気に入りにしている場合はtrue、そうでない場合はfalseとなる。
+ */
+onMounted(() => {
+    reactiveItems.value = props.items.map(item => ({
+        id: item.id,
+        name: item.name,
+        brand: item.brand,
+        price: item.price ? item.price.toLocaleString() : '---',
+        item_image: '/storage/images/items/' + item.item_images[0].image_path,
+        seller_image: item.user.user_image.image_path ? '/storage/images/users/' + item.user.user_image.image_path : '/images/default-user-icon.jpg',
+        liked: item.user_attached === 1 ? true : false,
+    }));
+});
+
+/**
+ * 選択された商品のお気に入り状態を切り替える関数。
+ * 選択された商品のlikedプロパティを切り替え、状態に応じてattachItemまたはattachItemを呼び出す。
+ * restaurant.likedがtrue - attachRestaurantを呼び出し、お気に入り登録
+ * restaurant.likedがfalse - detachRestaurantを呼び出し、お気に入り解除
+ *
+ * @param {Object} item - お気に入り状態を切り替える店舗のオブジェクト
+ */
+const toggleLike = (item) => {
+    item.liked = !item.liked;
+    if (item.liked) {
+        attachItem(item);
+    } else {
+        detachItem(item);
+    }
+}
+
+/**
+ * 特定の商品をユーザーのお気に入りに登録するための関数。
+ * Inertia.jsを使用して、サーバーの `items.attach` ルートにPOSTリクエストを送信する。
+ *
+ * @param {Object} item - お気に入りに追加する商品のオブジェクト
+ *                        必要なプロパティ: `id` - 商品の一意の識別子
+ */
+const attachItem = (item) => {
+    Inertia.post(route('items.attach', { item: item.id }), {},
+        {
+            preserveState: true,
+            preserveScroll: true,
+        }
+    );
+}
+
+/**
+ * 特定の商品をユーザーのお気に入りから削除するための関数。
+ * Inertia.jsを使用して、サーバーの `items.detach` ルートにDELETEリクエストを送信する。
+ *
+ * @param {Object} item - お気に入りから削除する商品のオブジェクト
+ *                        必要なプロパティ: `id` - 商品の一意の識別子
+ */
+const detachItem = (item) => {
+    Inertia.delete(route('items.detach', { item: item.id }),
+        {
+            preserveState: true,
+            preserveScroll: true,
+        }
+    );
+}
 </script>
 
 <template>
     <Head title="ホーム" />
 
     <AuthenticatedLayout>
-
+        <!-- トップ上部メッセージ -->
         <div class="flex justify-center items-center h-20 md:h-36 bg-cover bg-center object-cover object-center rainy-background" style="background-image: url('/images/header-image.jpeg')">
             <h2 class="font-great-vibes text-xl md:text-3xl text-light leading-tight text-center">Here's to your fabulous find!</h2>
         </div>
@@ -119,23 +148,23 @@ const StoreItem = () => {
 
                 <!-- 商品一覧 -->
                 <div class="flex flex-wrap -m-4">
-                    <div class="p-4 md:w-1/3" v-for="(item, index) in items" :key="item.id">
+                    <div class="p-4 md:w-1/3" v-for="(item, index) in reactiveItems" :key="item.id">
                         <div class="h-full rounded-lg overflow-hidden">
                             <!-- 商品画像 -->
                             <Link class="group relative block rounded-xl overflow-hidden dark:focus:outline-none" :href="route('items.show', { item: item.id })">
                             <div class="aspect-w-12 aspect-h-7 sm:aspect-none rounded-xl overflow-hidden">
-                                <img class="group-hover:scale-105 transition-transform duration-500 ease-in-out rounded-xl h-72 w-96 md:w-full object-cover" :src="itemImages[index]" alt="Image Description">
+                                <img class="group-hover:scale-105 transition-transform duration-500 ease-in-out rounded-xl h-72 w-96 md:w-full object-cover" :src="item.item_image" alt="Image Description">
                             </div>
                             </Link>
                             <!-- 商品情報 -->
                             <div class="p-6">
                                 <h2 class="tracking-widest text-xs title-font font-medium text-light mb-1">{{ item.brand ?? '-' }}</h2>
                                 <h1 class="title-font text-base font-medium text-light mb-3">{{ item.name }}</h1>
-                                <p class="leading-relaxed text-orange-300 text-3xl font-bold mb-3"><span class="text-lg">¥ </span>{{ formattedPrices[index] }}</p>
+                                <p class="leading-relaxed text-orange-300 text-3xl font-bold mb-3"><span class="text-lg">¥ </span>{{ item.price }}</p>
                                 <div class="flex items-center flex-wrap ">
                                     <!-- 出品者画像 -->
                                     <Link class="inline-flex items-center md:mb-2 lg:mb-0 cursor-pointer" as="button">
-                                    <img class="inline-block h-[2.75rem] w-[2.75rem] rounded-full object-cover" :src="sellerImages[index]" alt="seller image">
+                                    <img class="inline-block h-[2.75rem] w-[2.75rem] rounded-full object-cover" :src="item.seller_image" alt="seller image">
                                     </Link>
                                     <!-- コメント -->
                                     <span class="text-gray-400 mr-3 inline-flex items-center lg:ml-auto md:ml-0 ml-auto leading-none text-sm py-1">
@@ -145,8 +174,8 @@ const StoreItem = () => {
                                     </span>
                                     <!-- お気に入り -->
                                     <span class="text-gray-400 inline-flex items-center leading-none text-sm -mr-2">
-                                        <button class="rounded-full w-8 h-8 bg-black hover:bg-gray-600 p-0 border-0 inline-flex items-center justify-center text-gray-500">
-                                            <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
+                                        <button class="rounded-full w-8 h-8 bg-black hover:bg-gray-600 p-0 border-0 inline-flex items-center justify-center text-gray-500" @click="toggleLike(item)">
+                                            <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24" :class="{ 'text-red-500': item.liked }">
                                                 <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path>
                                             </svg>
                                         </button>

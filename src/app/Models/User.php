@@ -86,7 +86,7 @@ class User extends Authenticatable
     }
 
     /**
-     * ユーザーに関連する商品を取得する。
+     * ユーザーに関連する出品された商品を取得する。
      *
      * このメソッドは一対多のリレーションシップを表し、関連するItemモデルのインスタンスのコレクションを返す。
      * ユーザは `items` テーブルを介して商品情報と関連付けられる。
@@ -96,5 +96,18 @@ class User extends Authenticatable
     public function items()
     {
         return $this->hasMany(Item::class);
+    }
+
+    /**
+     * ユーザーに関連するお気に入り登録された商品のコレクションを取得する。
+     *
+     * このメソッドは多対多のリレーションシップを表し、関連するitemモデルのインスタンスのコレクションを返す。
+     * ユーザーと商品は `item_user` 中間テーブルを介して関連付けられる。
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function favoritedItems()
+    {
+        return $this->belongsToMany(Item::class, 'item_user');
     }
 }
