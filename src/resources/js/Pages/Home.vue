@@ -124,7 +124,7 @@ const detachItem = (item) => {
                     <!-- 検索エリア -->
                     <div class="hidden md:block">
                         <div class="relative">
-                            <input type="text" id="hs-leading-icon" name="hs-leading-icon" class="py-3 px-4 ps-11 block w-full shadow-sm rounded-lg text-sm focus:z-10 disabled:opacity-50 disabled:pointer-events-none bg-gray-800 border-none text-gray-400 focus:ring-gray-600 placeholder-light" placeholder="何をお探しですか？">
+                            <input type="text" id="hs-leading-icon" name="hs-leading-icon" class="py-3 px-4 ps-11 block w-full shadow-sm rounded-lg text-sm focus:z-10 disabled:opacity-50 disabled:pointer-events-none bg-gray-800 border-none text-gray-400 focus:ring-gray-600 placeholder-gray-400" placeholder="何をお探しですか？">
                             <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none z-20 ps-4">
                                 <svg class="flex-shrink-0 h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <circle cx="11" cy="11" r="8" />
@@ -149,7 +149,7 @@ const detachItem = (item) => {
 
                 <!-- 商品一覧 -->
                 <div class="flex flex-wrap -m-4">
-                    <div class="p-4 md:w-1/3" v-for="(item, index) in reactiveItems" :key="item.id">
+                    <div class="p-4 md:w-1/5" v-for="(item, index) in reactiveItems" :key="item.id">
                         <div class="h-full rounded-lg overflow-hidden">
                             <!-- 商品画像 -->
                             <Link class="group relative block rounded-xl overflow-hidden dark:focus:outline-none" :href="route('items.show', { item: item.id })">
