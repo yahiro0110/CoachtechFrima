@@ -30,6 +30,7 @@ class ItemController extends Controller
             [
                 'items' => Item::select('id', 'name', 'brand', 'seller_id', 'price')
                     ->with(['itemImages', 'user.userImage'])
+                    ->WithFavoriteUserCount()
                     ->withUserAttached(Auth::id())
                     ->get(),
                 'categories' => Category::select('id', 'name', 'parent_id')->get(),

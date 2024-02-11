@@ -117,4 +117,19 @@ class Item extends Model
                 ->limit(1)
         ]);
     }
+
+    /**
+     * 当該商品に関連するお気に入り登録者の数をカウントするクエリスコープ。
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query Eloquentクエリビルダインスタンス
+     * @return \Illuminate\Database\Eloquent\Builder 更新されたクエリ
+     */
+    public function scopeWithFavoriteUserCount($query)
+    {
+        return $query->addSelect([
+            'favoriteUser_count' => DB::table('item_user')
+                ->whereColumn('item_user.item_id', 'items.id')
+                ->selectRaw('count(*)')
+        ]);
+    }
 }

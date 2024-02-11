@@ -10,7 +10,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import FlashMessage from '@/Components/FlashMessage.vue';
 import { Head, Link } from '@inertiajs/inertia-vue3';
 import { Inertia } from '@inertiajs/inertia';
-import { computed, onMounted, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 
 /**
  * コンポーネントのプロパティ定義。
@@ -34,9 +34,7 @@ const props = defineProps({
 const reactiveItems = ref([]);
 
 /**
- * コンポーネントがマウントされた際に、propsから取得した店舗情報でreactiveItemsを初期化する。
- * 各商品オブジェクトに 'liked' プロパティを追加し、ユーザーが商品をお気に入りにしているかどうかを表す。
- * 'liked' プロパティは、ユーザーが商品をお気に入りにしている場合はtrue、そうでない場合はfalseとなる。
+ * コンポーネントがマウントされた際に、propsから取得した商品情報からreactiveItemsを初期化する。
  */
 onMounted(() => {
     reactiveItems.value = props.items.map(item => ({
@@ -46,23 +44,26 @@ onMounted(() => {
         price: item.price ? item.price.toLocaleString() : '---',
         item_image: '/storage/images/items/' + item.item_images[0].image_path,
         seller_image: item.user.user_image.image_path ? '/storage/images/users/' + item.user.user_image.image_path : '/images/default-user-icon.jpg',
-        liked: item.user_attached === 1 ? true : false,
+        favorite_count: item.favoriteUser_count, // お気に入り登録者数
+        liked: item.user_attached === 1 ? true : false, // お気に入り登録済みかどうか
     }));
 });
 
 /**
  * 選択された商品のお気に入り状態を切り替える関数。
  * 選択された商品のlikedプロパティを切り替え、状態に応じてattachItemまたはattachItemを呼び出す。
- * restaurant.likedがtrue - attachRestaurantを呼び出し、お気に入り登録
- * restaurant.likedがfalse - detachRestaurantを呼び出し、お気に入り解除
+ * restaurant.likedがtrue - attachRestaurantを呼び出し、お気に入り登録し、restaurant.favorite_countをインクリメント
+ * restaurant.likedがfalse - detachRestaurantを呼び出し、お気に入り解除、restaurant.favorite_countをデクリメント
  *
  * @param {Object} item - お気に入り状態を切り替える店舗のオブジェクト
  */
 const toggleLike = (item) => {
     item.liked = !item.liked;
     if (item.liked) {
+        item.favorite_count++;
         attachItem(item);
     } else {
+        item.favorite_count--;
         detachItem(item);
     }
 }
@@ -144,7 +145,7 @@ const detachItem = (item) => {
                     </div>
                 </div>
 
-                <hr class="border-light py-2 mt-2">
+                <hr class="border-gray-700 py-2 mt-2">
 
                 <!-- 商品一覧 -->
                 <div class="flex flex-wrap -m-4">
@@ -179,6 +180,7 @@ const detachItem = (item) => {
                                                 <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path>
                                             </svg>
                                         </button>
+                                        <span class="text-light" :class="{ 'text-red-500': item.liked }">{{ item.favorite_count }}</span>
                                     </span>
                                 </div>
                             </div>
