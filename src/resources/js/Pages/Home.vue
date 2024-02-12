@@ -10,7 +10,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import FlashMessage from '@/Components/FlashMessage.vue';
 import { Head, Link } from '@inertiajs/inertia-vue3';
 import { Inertia } from '@inertiajs/inertia';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 /**
  * コンポーネントのプロパティ定義。
@@ -32,6 +32,37 @@ const props = defineProps({
  * @type {ref<Array>} - リアクティブな商品情報の配列
  */
 const reactiveItems = ref([]);
+
+/**
+ * 各フィルタ条件を保持するリアクティブな参照。
+ * 初期値はfalseもしくは空文字列で、ユーザーがフィルタ条件を選択すると更新される。
+ *
+ * @type {Ref<boolean>} favoriteOnly - お気に入りのみを表示するかどうかを保持するリアクティブな参照
+ */
+const favoriteOnly = ref(false);
+
+/**
+ * フィルタ関数。
+ * フィルタ条件に基づいて、商品情報をフィルタリングする。
+ *
+ * @param {Array} items - フィルタリングする商品情報の配列
+ * @returns {Array} - フィルタリングされた商品情報の配列
+ */
+const filterByFavorite = (items) => favoriteOnly.value ? items.filter(item => item.liked) : items;
+
+/**
+ * フィルタされた商品情報を保持するリアクティブな参照。
+ * フィルタ条件に基づいて、filteredItemsを更新する。
+ *
+ * @type {Ref<Array>} - フィルタされた商品情報の配列
+ */
+const filteredItems = computed(() => {
+    let filtered = reactiveItems.value;
+    // フィルタ条件（お気に入り）に基づいて、商品をフィルタリング
+    // もしフィルタ結果が空の場合は、早期リターンする
+    if (!(filtered = filterByFavorite(filtered)).length) return filtered;
+    return filtered;
+});
 
 /**
  * コンポーネントがマウントされた際に、propsから取得した商品情報からreactiveItemsを初期化する。
@@ -117,7 +148,7 @@ const detachItem = (item) => {
                 <div class="flex justify-between items-end py-1">
                     <!-- お気に入り表示スイッチ -->
                     <div class="flex items-center">
-                        <input type="checkbox" id="hs-xs-switch" class="relative w-[35px] h-[21px] bg-gray-800 border-gray-700 text-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:ring-offset-gray-600 disabled:opacity-50 disabled:pointer-events-none checked:bg-none checked:text-primary checked:border-dark focus:checked:border-dark before:inline-block before:w-4 before:h-4 before:bg-white checked:before:bg-light before:translate-x-0 checked:before:translate-x-full before:rounded-full before:shadow before:transform before:ring-0 before:transition before:ease-in-out before:duration-200 focus:outline-none focus:ring-0">
+                        <input type="checkbox" id="hs-xs-switch" class="relative w-[35px] h-[21px] bg-gray-800 border-gray-700 text-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:ring-offset-gray-600 disabled:opacity-50 disabled:pointer-events-none checked:bg-none checked:text-primary checked:border-dark focus:checked:border-dark before:inline-block before:w-4 before:h-4 before:bg-white checked:before:bg-light before:translate-x-0 checked:before:translate-x-full before:rounded-full before:shadow before:transform before:ring-0 before:transition before:ease-in-out before:duration-200 focus:outline-none focus:ring-0" v-model="favoriteOnly">
                         <label for="hs-xs-switch" class="text-sm text-gray-400 ms-2">お気に入りのみを表示</label>
                     </div>
 
@@ -149,7 +180,7 @@ const detachItem = (item) => {
 
                 <!-- 商品一覧 -->
                 <div class="flex flex-wrap -m-4">
-                    <div class="p-4 md:w-1/5" v-for="(item, index) in reactiveItems" :key="item.id">
+                    <div class="p-4 md:w-1/5" v-for="(item, index) in filteredItems" :key="item.id">
                         <div class="h-full rounded-lg overflow-hidden">
                             <!-- 商品画像 -->
                             <Link class="group relative block rounded-xl overflow-hidden dark:focus:outline-none" :href="route('items.show', { item: item.id })">
