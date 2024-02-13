@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Item extends Model
 {
@@ -33,12 +34,14 @@ class Item extends Model
      * このモデルが所属するUserモデルのインスタンスを取得する。
      *
      * このメソッドは一対多のリレーションシップの逆向きを表し、所属するUserモデルのインスタンスを返す。
+     * 商品は `seller_id` カラムを介してユーザーと関連付けられる。
+     * なお、ここでのユーザーは、商品を出品しているユーザーである。
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'seller_id');
     }
 
     /**
@@ -76,5 +79,57 @@ class Item extends Model
     public function itemImages()
     {
         return $this->hasMany(ItemImage::class);
+    }
+
+    /**
+     * 商品に関連するユーザーのコレクションを取得する。
+     *
+     * このメソッドは多対多のリレーションシップを表し、関連するUserモデルのインスタンスのコレクションを返す。
+     * ユーザーと商品は `item_user` 中間テーブルを介して関連付けられている。
+     * なお、ここでのユーザーは、商品をお気に入り登録しているユーザーである。
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'item_user');
+    }
+
+    // --------------------------------------------------------------------------------
+    // クエリスコープとカスタムメソッド
+    // --------------------------------------------------------------------------------
+
+    /**
+     * ログインしているユーザーとお気に入りで関連付けられた商品にマークを付けるローカルスコープ。
+     * 関連した商品があれば、 `user_attached` に `1` を設定し、なければ `0` を設定する。
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query Eloquentクエリビルダインスタンス
+     * @param int $userId ログインユーザーのID
+     * @return \Illuminate\Database\Eloquent\Builder ユーザーに関連付けられているレストランの数を含むクエリ
+     */
+    public function scopeWithUserAttached($query, $userId)
+    {
+        return $query->addSelect([
+            'user_attached' => DB::table('item_user')
+                ->whereColumn('item_user.item_id', 'items.id')
+                ->where('user_id', $userId)
+                ->selectRaw('count(user_id)')
+                ->limit(1)
+        ]);
+    }
+
+    /**
+     * 当該商品に関連するお気に入り登録者の数をカウントするクエリスコープ。
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query Eloquentクエリビルダインスタンス
+     * @return \Illuminate\Database\Eloquent\Builder 更新されたクエリ
+     */
+    public function scopeWithFavoriteUserCount($query)
+    {
+        return $query->addSelect([
+            'favoriteUser_count' => DB::table('item_user')
+                ->whereColumn('item_user.item_id', 'items.id')
+                ->selectRaw('count(*)')
+        ]);
     }
 }

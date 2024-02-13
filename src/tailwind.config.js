@@ -13,6 +13,8 @@ module.exports = {
         extend: {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                "great-vibes": ['Great Vibes', 'cursive'],
+                "playfair-display": ['Playfair Display', 'serif'],
             },
             colors: {
                 'primary': '#5C318C',

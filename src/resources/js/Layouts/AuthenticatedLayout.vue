@@ -20,7 +20,7 @@ const navigateToCreateItem = () => {
  *
  *  @type {string} - プロフィール画像のファイルパス
  */
-let userIcon = usePage().props.value.auth.userImage ? ref('/storage/images/users/' + usePage().props.value.auth.userImage) : ref('/storage/images/users/default.jpg');
+let userIcon = usePage().props.value.auth.userImage ? ref('/storage/images/users/' + usePage().props.value.auth.userImage) : ref('/images/default-user-icon.jpg');
 </script>
 
 <template>
@@ -28,13 +28,15 @@ let userIcon = usePage().props.value.auth.userImage ? ref('/storage/images/users
         <div class="min-h-screen bg-black">
 
             <!-- Page Heading -->
-            <div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
+            <div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center sticky top-0 z-50 bg-black opacity-90">
                 <a class="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
                     <!-- Logo -->
+                    <Link :href="route('home')">
                     <div class="shrink-0 flex items-center">
                         <ApplicationLogo class="block h-9 w-auto fill-current text-light" />
+                        <span class="font-playfair-display ml-3 text-xl text-light">COACHTECH FREMA</span>
                     </div>
-                    <span class="ml-3 text-xl text-light">COACHTECHフリマ</span>
+                    </Link>
                     <!-- アカウントボタン レスポンシブ対応（スマホサイズで表示） -->
                     <div class="md:hidden sm:flex sm:items-center sm:ml-6">
                         <!-- Settings Dropdown -->
@@ -76,23 +78,10 @@ let userIcon = usePage().props.value.auth.userImage ? ref('/storage/images/users
                             </Dropdown>
                         </div>
                     </div>
-                    <a class="hidden md:block mr-5 text-light text-sm">お気に入り</a>
-                    <a class="hidden md:block mr-5 text-light text-sm">検索</a>
                 </nav>
 
                 <!-- 出品ボタン（タブレット以上で表示） -->
                 <button class="hidden md:inline-flex items-center text-light bg-primary font-bold border-0 py-1 px-3 focus:outline-none hover:bg-selected-button rounded text-base mt-4 md:mt-0" @click="navigateToCreateItem">出品</button>
-
-                <!-- 検索エリア レスポンシブ対応（スマホサイズで表示）  -->
-                <div class="relative md:hidden">
-                    <input type="text" class="peer py-3 pe-0 ps-8 block w-full bg-transparent border-t-transparent border-b-2 border-x-transparent border-b-light text-sm focus:border-t-transparent focus:border-x-transparent focus:border-b-light focus:ring-0 disabled:opacity-50 disabled:pointer-events-none placeholder-light" placeholder="何をお探しですか？">
-                    <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none ps-2 peer-disabled:opacity-50 peer-disabled:pointer-events-none">
-                        <svg class="flex-shrink-0 h-4 w-4 text-light" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="11" cy="11" r="8" />
-                            <path d="m21 21-4.3-4.3" />
-                        </svg>
-                    </div>
-                </div>
             </div>
 
             <!-- Page Heading -->

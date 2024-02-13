@@ -56,7 +56,7 @@ const maxNameLength = 20;
  *
  *  @type {string} - プロフィール画像のファイルパス
  */
-let userIcon = form.image_path ? ref('/storage/images/users/' + form.image_path) : ref('/storage/images/users/default.jpg');
+let userIcon = form.image_path ? ref('/storage/images/users/' + form.image_path) : ref('/images/default-user-icon.jpg');
 
 /**
  * ファイル選択時に呼び出され、画像プレビューを更新する。

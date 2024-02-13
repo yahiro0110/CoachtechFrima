@@ -26,9 +26,13 @@ Route::get('/', function () {
     ]);
 });
 
+Route::get('/home', [ItemController::class, 'home'])->name('home')->middleware('auth', 'verified');;
+
 Route::resource('items', ItemController::class)->middleware('auth', 'verified');
 Route::put('/items/{item}/detail', [ItemController::class, 'updateDetail'])->name('items.detail.update')->middleware('auth', 'verified');
 Route::post('/items/{item}/images', [ItemController::class, 'updateImages'])->name('items.images.update')->middleware('auth', 'verified');
+Route::post('/items/{item}/attach', [ItemController::class, 'attachFavorite'])->middleware('auth', 'verified')->name('items.attach');
+Route::delete('/items/{item}/detach', [ItemController::class, 'detachFavorite'])->middleware('auth', 'verified')->name('items.detach');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
