@@ -9,6 +9,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import FlashMessage from '@/Components/FlashMessage.vue';
 import { Head, Link } from '@inertiajs/inertia-vue3';
+import Modal from '@/Components/Modal.vue';
 import { Inertia } from '@inertiajs/inertia';
 import { computed, onMounted, ref } from 'vue';
 
@@ -34,34 +35,80 @@ const props = defineProps({
 const reactiveItems = ref([]);
 
 /**
+ * モーダルダイアログを表示するためのリアクティブなプロパティ。
+ *
+ * @type {Ref<boolean>} - モーダルダイアログを表示するかどうかを示すブール値
+ */
+const searchItemByNameOrCategory = ref(false);
+
+/**
+ * モーダルダイアログを表示する関数。
+ */
+const openModal = () => searchItemByNameOrCategory.value = true;
+
+/**
+ * モーダルダイアログを非表示にする関数。
+ */
+const closeModal = () => searchItemByNameOrCategory.value = false;
+
+/**
  * 各フィルタ条件を保持するリアクティブな参照。
  * 初期値はfalseもしくは空文字列で、ユーザーがフィルタ条件を選択すると更新される。
  *
  * @type {Ref<boolean>} favoriteOnly - お気に入りのみを表示するかどうかを保持するリアクティブな参照
+ * @type {Ref<string>} itemNameFilterKey - 商品名でフィルタするためのキーワードを保持するリアクティブな参照
  */
 const favoriteOnly = ref(false);
+const itemNameFilterKey = ref('');
 
 /**
  * フィルタ関数。
  * フィルタ条件に基づいて、商品情報をフィルタリングする。
+ * filterByFavorite - お気に入りのみを表示するかどうかに基づいて商品情報をフィルタリング
+ * filterByName - 商品名でフィルタするためのキーワードに基づいて商品情報をフィルタリング
  *
  * @param {Array} items - フィルタリングする商品情報の配列
  * @returns {Array} - フィルタリングされた商品情報の配列
  */
 const filterByFavorite = (items) => favoriteOnly.value ? items.filter(item => item.liked) : items;
+const filterByName = (items) => itemNameFilterKey.value ? items.filter(item => item.name.toLowerCase().includes(itemNameFilterKey.value.toLowerCase())) : items;
 
 /**
- * フィルタされた商品情報を保持するリアクティブな参照。
+ * 特定の検索条件でフィルタされた商品情報とその件数を取得する関数。
+ *
+ * @returns {Object} - フィルタされた商品情報とその件数を含むオブジェクト
+ */
+const getFilteredItemsAndCount = () => {
+    let filtered = reactiveItems.value;
+    // お気に入りによるフィルタ
+    filtered = filterByFavorite(filtered);
+    // 商品名によるフィルタが適用された商品の件数を計算
+    const filteredByName = filterByName(filtered);
+    return {
+        filteredItems: filtered.length ? filteredByName : filtered, // 商品名フィルタが空の場合はお気に入りフィルタのみ適用
+        filteredByNameCount: filteredByName.length,
+    };
+};
+
+/**
+ * フィルタされた商品情報を保持する算出プロパティ。
  * フィルタ条件に基づいて、filteredItemsを更新する。
  *
- * @type {Ref<Array>} - フィルタされた商品情報の配列
+ * @type {Ref<Array>} - 商品名でフィルタされた商品情報の配列
  */
 const filteredItems = computed(() => {
-    let filtered = reactiveItems.value;
-    // フィルタ条件（お気に入り）に基づいて、商品をフィルタリング
-    // もしフィルタ結果が空の場合は、早期リターンする
-    if (!(filtered = filterByFavorite(filtered)).length) return filtered;
-    return filtered;
+    const { filteredItems } = getFilteredItemsAndCount();
+    return filteredItems;
+});
+
+/**
+ * 商品名でフィルタされた商品情報の件数を保持する算出プロパティ。
+ *
+ * @type {Ref<number>} - 商品名でフィルタされた商品情報の件数
+ */
+const filteredByNameCount = computed(() => {
+    const { filteredByNameCount } = getFilteredItemsAndCount();
+    return filteredByNameCount;
 });
 
 /**
@@ -145,7 +192,7 @@ const detachItem = (item) => {
 
             <div class="container px-5 py-10 mx-auto">
 
-                <div class="flex justify-between items-end py-1">
+                <div class="flex justify-between items-end py-1 z-0">
                     <!-- お気に入り表示スイッチ -->
                     <div class="flex items-center">
                         <input type="checkbox" id="hs-xs-switch" class="relative w-[35px] h-[21px] bg-gray-800 border-gray-700 text-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:ring-offset-gray-600 disabled:opacity-50 disabled:pointer-events-none checked:bg-none checked:text-primary checked:border-dark focus:checked:border-dark before:inline-block before:w-4 before:h-4 before:bg-white checked:before:bg-light before:translate-x-0 checked:before:translate-x-full before:rounded-full before:shadow before:transform before:ring-0 before:transition before:ease-in-out before:duration-200 focus:outline-none focus:ring-0" v-model="favoriteOnly">
@@ -153,25 +200,15 @@ const detachItem = (item) => {
                     </div>
 
                     <!-- 検索エリア -->
-                    <div class="hidden md:block">
+                    <div class="w-8 md:w-64 md:block">
                         <div class="relative">
-                            <input type="text" id="hs-leading-icon" name="hs-leading-icon" class="py-3 px-4 ps-11 block w-full shadow-sm rounded-lg text-sm focus:z-10 disabled:opacity-50 disabled:pointer-events-none bg-gray-800 border-none text-gray-400 focus:ring-gray-600 placeholder-gray-400" placeholder="何をお探しですか？">
+                            <input type="text" id="hs-leading-icon" name="hs-leading-icon" class="md:py-3 md:px-4 md:ps-11 block w-0 md:w-full shadow-sm rounded-lg text-sm focus:z-10 disabled:opacity-50 disabled:pointer-events-none bg-black md:bg-gray-800 border-none text-gray-400 focus:ring-black md:focus:ring-gray-600 placeholder-gray-400" placeholder="何をお探しですか？" @click="openModal" :value="itemNameFilterKey">
                             <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none z-20 ps-4">
-                                <svg class="flex-shrink-0 h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <svg class="flex-shrink-0 md:h-4 md:w-4 h-6 w-6 -mb-4 md:mb-0 -ml-3 md:ml-0 text-gray-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <circle cx="11" cy="11" r="8" />
                                     <path d="m21 21-4.3-4.3" />
                                 </svg>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- 検索エリア レスポンシブ対応（スマホサイズで表示）  -->
-                    <div class="relative md:hidden">
-                        <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none ps-2 peer-disabled:opacity-50 peer-disabled:pointer-events-none">
-                            <svg class="flex-shrink-0 h-6 w-6 mb-5 -ml-10 text-gray-400 text-right" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="11" cy="11" r="8" />
-                                <path d="m21 21-4.3-4.3" />
-                            </svg>
                         </div>
                     </div>
                 </div>
@@ -219,6 +256,45 @@ const detachItem = (item) => {
                     </div>
                 </div>
             </div>
+
+            <Modal :show="searchItemByNameOrCategory" @close="closeModal">
+                <div class="p-6">
+                    <h2 class="text-lg font-medium text-gray-700">
+                        何をお探しですか？
+                    </h2>
+
+                    <div class="relative">
+                        <input type="text" class="peer py-3 pe-0 ps-8 block w-full bg-transparent border-t-transparent border-b-2 border-x-transparent border-b-gray-200 text-sm focus:border-t-transparent focus:border-x-transparent focus:border-b-blue-500 focus:ring-0 disabled:opacity-50 disabled:pointer-events-none" placeholder="商品名を入力してください" v-model="itemNameFilterKey">
+                        <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none ps-2 peer-disabled:opacity-50 peer-disabled:pointer-events-none">
+                            <svg class="flex-shrink-0 w-4 h-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="3" y1="9" x2="21" y2="9"></line>
+                                <line x1="3" y1="15" x2="21" y2="15"></line>
+                                <line x1="9" y1="3" x2="9" y2="21"></line>
+                                <line x1="15" y1="3" x2="15" y2="21"></line>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- ヒット件数 -->
+                    <div class="mt-3" v-show="itemNameFilterKey && filteredByNameCount > 0">
+                        <p class="text-dark text-sm"><span class="text-base">{{ filteredByNameCount }}&nbsp;</span>件、見つかりました</p>
+                    </div>
+
+                    <div class="mt-3">
+                        <ul>
+                            <li class="text-gray-600 p-2 cursor-pointer hover:bg-gray-100" @click="">
+                                カテゴリから探す
+                            </li>
+                            <li class="text-gray-600 p-2 cursor-pointer hover:bg-gray-100" @click="">
+                                ブランドから探す
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+            </Modal>
+
         </section>
     </AuthenticatedLayout>
 </template>
