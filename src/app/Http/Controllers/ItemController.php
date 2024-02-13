@@ -28,7 +28,7 @@ class ItemController extends Controller
         return Inertia::render(
             'Home',
             [
-                'items' => Item::select('id', 'name', 'brand', 'seller_id', 'price')
+                'items' => Item::select('id', 'name', 'brand', 'seller_id', 'category_id', 'price')
                     ->with(['itemImages', 'user.userImage'])
                     ->WithFavoriteUserCount()
                     ->withUserAttached(Auth::id())
