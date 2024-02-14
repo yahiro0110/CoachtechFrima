@@ -289,7 +289,7 @@ const detachItem = (item) => {
                     <div class="p-4 md:w-1/5" v-for="(item, index) in filteredItems" :key="item.id">
                         <div class="h-full rounded-lg overflow-hidden">
                             <!-- 商品画像 -->
-                            <Link class="group relative block rounded-xl overflow-hidden dark:focus:outline-none" :href="route('items.show', { item: item.id })">
+                            <Link class="group relative block rounded-xl overflow-hidden dark:focus:outline-none" :href="route('purchases.create.withParam', { item: item.id })">
                             <div class="aspect-w-12 aspect-h-7 sm:aspect-none rounded-xl overflow-hidden">
                                 <img class="group-hover:scale-110 transition-transform duration-500 ease-in-out rounded-xl h-72 w-96 md:w-full object-cover" :src="item.item_image" alt="Image Description">
                             </div>

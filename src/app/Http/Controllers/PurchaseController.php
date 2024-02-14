@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePurchaseRequest;
 use App\Http\Requests\UpdatePurchaseRequest;
+use App\Models\Category;
+use App\Models\Condition;
+use App\Models\Item;
 use App\Models\Purchase;
+use Inertia\Inertia;
 
 class PurchaseController extends Controller
 {
@@ -23,9 +27,16 @@ class PurchaseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Item $item)
     {
-        //
+        return Inertia::render(
+            'Purchases/Create',
+            [
+                'item' => Item::with('itemImages', 'user.userImage')->findOrFail($item->id),
+                'categories' => Category::select('id', 'name', 'parent_id')->get(),
+                'conditions' => Condition::select('id', 'name')->get(),
+            ]
+        );
     }
 
     /**

@@ -67,24 +67,24 @@ const showPreviousImage = () => {
         <div class="flex flex-wrap md:-m-2 -m-1 md:w-2/3">
             <div class="flex flex-wrap w-1/2">
                 <div class="md:p-2 p-1 w-1/2">
-                    <img alt="gallery" class="w-full object-cover h-28 md:h-52 object-center block cursor-pointer" :src="'/storage/images/items/' + (itemImages[1]?.image_path ?? 'notfound.png')" @click="gallerySelection">
+                    <img alt="gallery" class="w-full object-cover h-28 md:h-52 object-center block cursor-pointer" :src="itemImages[1]?.image_path ? '/storage/images/items/' + itemImages[1]?.image_path : '/images/not-image.png'" @click="gallerySelection">
                 </div>
                 <div class="md:p-2 p-1 w-1/2">
-                    <img alt="gallery" class="w-full object-cover h-28 md:h-52 object-center block cursor-pointer" :src="'/storage/images/items/' + (itemImages[2]?.image_path ?? 'notfound.png')" @click="gallerySelection">
+                    <img alt="gallery" class="w-full object-cover h-28 md:h-52 object-center block cursor-pointer" :src="itemImages[2]?.image_path ? '/storage/images/items/' + itemImages[2]?.image_path : '/images/not-image.png'" @click="gallerySelection">
                 </div>
                 <div class="md:p-2 p-1 w-full">
-                    <img alt="gallery" class="w-full h-52 md:h-96 object-cover object-center block cursor-pointer" :src="'/storage/images/items/' + (itemImages[0]?.image_path ?? 'notfound.png')" @click="gallerySelection">
+                    <img alt="gallery" class="w-full h-52 md:h-96 object-cover object-center block cursor-pointer" :src="itemImages[0]?.image_path ? '/storage/images/items/' + itemImages[0]?.image_path : '/images/not-image.png'" @click="gallerySelection">
                 </div>
             </div>
             <div class="flex flex-wrap w-1/2">
                 <div class="md:p-2 p-1 w-full">
-                    <img alt="gallery" class="w-full h-52 md:h-96 object-cover object-center block cursor-pointer" :src="'/storage/images/items/' + (itemImages[3]?.image_path ?? 'notfound.png')" @click="gallerySelection">
+                    <img alt="gallery" class="w-full h-52 md:h-96 object-cover object-center block cursor-pointer" :src="itemImages[3]?.image_path ? '/storage/images/items/' + itemImages[3]?.image_path : '/images/not-image.png'" @click="gallerySelection">
                 </div>
                 <div class="md:p-2 p-1 w-1/2">
-                    <img alt="gallery" class="w-full h-28 object-cover md:h-52 object-center block cursor-pointer" :src="'/storage/images/items/' + (itemImages[4]?.image_path ?? 'notfound.png')" @click="gallerySelection">
+                    <img alt="gallery" class="w-full h-28 object-cover md:h-52 object-center block cursor-pointer" :src="itemImages[4]?.image_path ? '/storage/images/items/' + itemImages[4]?.image_path : '/images/not-image.png'" @click="gallerySelection">
                 </div>
                 <div class="md:p-2 p-1 w-1/2">
-                    <img alt="gallery" class="w-full h-28 object-cover md:h-52 object-center block cursor-pointer" :src="'/storage/images/items/' + (itemImages[5]?.image_path ?? 'notfound.png')" @click="gallerySelection">
+                    <img alt="gallery" class="w-full h-28 object-cover md:h-52 object-center block cursor-pointer" :src="itemImages[5]?.image_path ? '/storage/images/items/' + itemImages[5]?.image_path : '/images/not-image.png'" @click="gallerySelection">
                 </div>
             </div>
         </div>
