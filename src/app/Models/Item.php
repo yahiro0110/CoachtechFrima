@@ -95,6 +95,19 @@ class Item extends Model
         return $this->belongsToMany(User::class, 'item_user');
     }
 
+    /**
+     * 商品に関連する購入明細を取得する。
+     *
+     * このメソッドは一対多のリレーションシップを表し、関連するPurchaseモデルのインスタンスのコレクションを返す。
+     * 商品は `purchases` テーブルを介して購入明細と関連付けられる。
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function purchases()
+    {
+        return $this->hasMany(Purchase::class);
+    }
+
     // --------------------------------------------------------------------------------
     // クエリスコープとカスタムメソッド
     // --------------------------------------------------------------------------------

@@ -110,4 +110,17 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Item::class, 'item_user');
     }
+
+    /**
+     * ユーザーに関連する購入明細を取得する。
+     *
+     * このメソッドは一対多のリレーションシップを表し、関連するPurchaseモデルのインスタンスのコレクションを返す。
+     * ユーザは `purchases` テーブルを介して購入明細と関連付けられる。
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function purchases()
+    {
+        return $this->hasMany(Purchase::class);
+    }
 }
