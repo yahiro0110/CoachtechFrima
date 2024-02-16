@@ -123,4 +123,17 @@ class User extends Authenticatable
     {
         return $this->hasMany(Purchase::class);
     }
+
+    /**
+     * ユーザに関連するコメントを取得する。
+     *
+     * このメソッドは一対多のリレーションシップを表し、関連するCommentモデルのインスタンスのコレクションを返す。
+     * ユーザは `comments` テーブルを介してコメントと関連付けられる。
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
 }

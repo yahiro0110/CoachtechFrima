@@ -33,6 +33,7 @@ class PurchaseController extends Controller
             'Purchases/Create',
             [
                 'item' => Item::with('itemImages', 'user.userImage')->findOrFail($item->id),
+                'comments' => $item->comments()->with('user.userImage')->get(),
                 'categories' => Category::select('id', 'name', 'parent_id')->get(),
                 'conditions' => Condition::select('id', 'name')->get(),
             ]

@@ -29,7 +29,7 @@ class ItemController extends Controller
             'Home',
             [
                 'items' => Item::select('id', 'name', 'brand', 'seller_id', 'category_id', 'price')
-                    ->with(['itemImages', 'user.userImage'])
+                    ->with(['itemImages', 'user.userImage', 'comments'])
                     ->WithFavoriteUserCount()
                     ->withUserAttached(Auth::id())
                     ->get(),

@@ -18,15 +18,24 @@ import { Inertia } from '@inertiajs/inertia';
 /**
  * コンポーネントのプロパティ定義。
  *
+ * @property {Object} item - 商品情報を含むオブジェクト
+ * @property {Array} comments - 商品に対するコメントの一覧を含む配列
  * @property {Array} categories - 商品カテゴリーの一覧を含む配列
  * @property {Array} conditions - 商品の状態の一覧を含む配列
  */
 const props = defineProps({
     item: Object,
+    comments: Array,
     categories: Array,
     conditions: Array,
 });
 
+/**
+ * 出品者の画像アイコンを取得するための算出プロパティ。
+ * 出品者の画像アイコンが存在する場合は、画像のパスを返し、存在しない場合はデフォルトのアイコンを返す。
+ *
+ * @returns {String} - 出品者のアイコンのパス
+ */
 const sellerIcon = computed(() => {
     return props.item.user.user_image.image_path ? '/storage/images/users/' + props.item.user.user_image.image_path : '/images/default-user-icon.jpg';
 });
@@ -39,7 +48,9 @@ const formattedPrices = computed(() => {
     return props.item.price.toLocaleString();
 });
 
-// 条件名を取得するための算出プロパティ
+/**
+ * 商品の状態名を取得するための算出プロパティ。
+ */
 const conditionName = computed(() => {
     // conditions 配列から item.condition_id に一致するオブジェクトを探す
     const condition = props.conditions.find(c => c.id === props.item.condition_id);
@@ -47,7 +58,12 @@ const conditionName = computed(() => {
     return condition ? condition.name : '不明';
 });
 
-// カテゴリパスを構築する関数
+/**
+ * 商品のカテゴリパスを構築するための関数。
+ *
+ * @param {Number} categoryId - 商品のカテゴリID
+ * @returns {String} - 商品のカテゴリパス
+ */
 const buildCategoryPath = (categoryId) => {
     const path = [];
     let currentCategory = props.categories.find(category => category.id === categoryId);
@@ -58,31 +74,12 @@ const buildCategoryPath = (categoryId) => {
     return path.join(' > '); // カテゴリパスを文字列として結合
 };
 
-// カテゴリパスを取得するための算出プロパティ
+/**
+ * 商品のカテゴリパスを取得するための算出プロパティ。
+ */
 const categoryPath = computed(() => {
     return buildCategoryPath(props.item.category_id);
 });
-
-/**
- * 商品情報を登録する関数。
- *
- * Inertia.jsのpostメソッドを使用して、フォームに入力されたデータをサーバーに送信する。
- * 成功時にはフォームの送信状態を更新し、エラー時にはエラーメッセージを表示するための処理が含まれる。
- * `preserveScroll`はページ遷移後のスクロール位置維持に使用。
- * `onSuccess`はフォーム送信成功時に実行されるコールバック関数で、`form.recentlySuccessful`をtrueに設定する。
- */
-const StoreItem = () => {
-    // imagesFormRef からファイルリストを取得
-    form.files = imagesFormRef.value.getSelectedFiles();
-
-    form.post(route('items.store'), {
-        preserveScroll: true,
-        onSuccess: () => {
-            form.recentlySuccessful = true;
-            form.reset();
-        },
-    });
-};
 
 /**
  * ユーザーを前のページに戻す関数。
@@ -123,7 +120,7 @@ const goBack = () => {
             <ItemDetailView :item="item" :categoryPath="categoryPath" :conditionName="conditionName" :formattedPrices="formattedPrices" />
 
             <!-- コメントフォームエリア -->
-            <CommentForm :item="item" />
+            <CommentForm :item="item" :comments="comments" />
 
         </section>
 

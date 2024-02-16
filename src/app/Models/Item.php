@@ -108,6 +108,19 @@ class Item extends Model
         return $this->hasMany(Purchase::class);
     }
 
+    /**
+     * 商品に関連するコメントを取得する。
+     *
+     * このメソッドは一対多のリレーションシップを表し、関連するCommentモデルのインスタンスのコレクションを返す。
+     * 商品は `comments` テーブルを介してコメントと関連付けられる。
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
     // --------------------------------------------------------------------------------
     // クエリスコープとカスタムメソッド
     // --------------------------------------------------------------------------------
