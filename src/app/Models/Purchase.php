@@ -18,14 +18,15 @@ class Purchase extends Model
      *
      * この属性リストを通じて、createやupdateメソッドなどで一括して割り当て可能なモデルの属性を定義する。
      * - `item_id` : 商品ID
-     * - `Purchaser_id` : 購入者ID
+     * - `purchaser_id` : 購入者ID
      * - `status_id` : 発送状況ステータス
      * - `ship_address` : 配送先住所
      * - `payment_id` : 決済ID
+     * - `email` : 購入者のメールアドレス
      *
      * @var array
      */
-    protected $fillable = ['item_id', 'Purchaser_id', 'status_id', 'ship_address', 'payment_id'];
+    protected $fillable = ['item_id', 'purchaser_id', 'status_id', 'ship_address', 'payment_id', 'email'];
 
     /**
      * このモデルが所属する商品を取得する。

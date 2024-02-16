@@ -34,6 +34,11 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
                 'userImage' => $request->user() ? $request->user()->userImage->image_path : null,
+                'userInfo' => [
+                    'postal' => $request->user() ? $request->user()->userDetail->postal : null,
+                    'address' => $request->user() ? $request->user()->userDetail->address : null,
+                ]
+
             ],
             'ziggy' => function () use ($request) {
                 return array_merge((new Ziggy)->toArray(), [

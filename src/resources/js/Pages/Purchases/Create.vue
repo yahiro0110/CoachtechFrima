@@ -10,9 +10,10 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import GalleryView from '@/Pages/Items/Partials/GalleryView.vue';
 import ItemDetailView from '@/Pages/Purchases/Partials/ItemDetailView.vue';
-import CommentForm from '@/Pages/Purchases/Partials/commentForm.vue';
+import CommentForm from '@/Pages/Purchases/Partials/CommentForm.vue';
+import CartView from '@/Pages/Purchases/Partials/CartView.vue';
 import { Head, Link } from '@inertiajs/inertia-vue3';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
 
 /**
@@ -22,12 +23,14 @@ import { Inertia } from '@inertiajs/inertia';
  * @property {Array} comments - 商品に対するコメントの一覧を含む配列
  * @property {Array} categories - 商品カテゴリーの一覧を含む配列
  * @property {Array} conditions - 商品の状態の一覧を含む配列
+ * @property {Array} payments - 支払い方法の一覧を含む配列
  */
 const props = defineProps({
     item: Object,
     comments: Array,
     categories: Array,
     conditions: Array,
+    payments: Array,
 });
 
 /**
@@ -82,6 +85,29 @@ const categoryPath = computed(() => {
 });
 
 /**
+ * カートアイテム情報を表示するためのリアクティブなプロパティ。
+ */
+const cartItemInformation = ref(false);
+
+/**
+ * カートアイテム情報を表示するための関数。
+ * その際、ページのトップにスクロールする。
+ */
+const addCartItem = () => {
+    cartItemInformation.value = true;
+    window.scrollTo(0, 0);
+}
+
+/**
+ * カートアイテム情報を非表示にするための関数。
+ * その際、ページのトップにスクロールする。
+ */
+const closeCartItem = () => {
+    cartItemInformation.value = false;
+    window.scrollTo(0, 0);
+}
+
+/**
  * ユーザーを前のページに戻す関数。
  */
 const goBack = () => {
@@ -114,13 +140,16 @@ const goBack = () => {
             </div>
 
             <!-- 商品画像エリア -->
-            <GalleryView :itemImages="item.item_images" />
+            <GalleryView :itemImages="item.item_images" v-if="!cartItemInformation" />
 
             <!-- 商品詳細エリア -->
-            <ItemDetailView :item="item" :categoryPath="categoryPath" :conditionName="conditionName" :formattedPrices="formattedPrices" />
+            <ItemDetailView :item="item" :categoryPath="categoryPath" :conditionName="conditionName" :formattedPrices="formattedPrices" @addCartItem="addCartItem" v-if="!cartItemInformation" />
 
             <!-- コメントフォームエリア -->
-            <CommentForm :item="item" :comments="comments" />
+            <CommentForm :item="item" :comments="comments" v-if="!cartItemInformation" />
+
+            <!-- 商品カートエリア -->
+            <CartView :item="item" :formattedPrices="formattedPrices" :payments="payments" @closeCartItem="closeCartItem" v-if="cartItemInformation" />
 
         </section>
 

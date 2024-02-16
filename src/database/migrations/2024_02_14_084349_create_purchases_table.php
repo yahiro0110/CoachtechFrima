@@ -20,6 +20,7 @@ return new class extends Migration
             $table->foreignId('status_id')->constrained('statuses')->onDelete('cascade');
             $table->string('ship_address');
             $table->foreignId('payment_id')->constrained('payments')->onDelete('cascade');
+            $table->string('email');
             $table->timestamps();
         });
     }

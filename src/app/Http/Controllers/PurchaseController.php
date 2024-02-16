@@ -7,7 +7,9 @@ use App\Http\Requests\UpdatePurchaseRequest;
 use App\Models\Category;
 use App\Models\Condition;
 use App\Models\Item;
+use App\Models\Payment;
 use App\Models\Purchase;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
 class PurchaseController extends Controller
@@ -36,6 +38,7 @@ class PurchaseController extends Controller
                 'comments' => $item->comments()->with('user.userImage')->get(),
                 'categories' => Category::select('id', 'name', 'parent_id')->get(),
                 'conditions' => Condition::select('id', 'name')->get(),
+                'payments' => Payment::select('id', 'name')->get(),
             ]
         );
     }
@@ -48,7 +51,16 @@ class PurchaseController extends Controller
      */
     public function store(StorePurchaseRequest $request)
     {
-        //
+        Purchase::create([
+            'item_id' => $request->item_id,
+            'purchaser_id' => $request->purchaser_id,
+            'status_id' => 1,
+            'ship_address' => $request->ship_address,
+            'payment_id' => $request->payment_id,
+            'email' => $request->email,
+        ]);
+
+        return Redirect::route('home');
     }
 
     /**

@@ -4,9 +4,6 @@
  * @requires ref - リアクティブなデータ参照を作成するために使用
  * @requires computed - Vue 3の算出プロパティを作成するために使用
  */
-import Modal from '@/Components/Modal.vue';
-import DangerButton from '@/Components/DangerButton.vue';
-import SecondaryButton from '@/Components/SecondaryButton.vue';
 import { computed, ref } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
 
@@ -22,40 +19,14 @@ const props = defineProps({
     formattedPrices: String,
 });
 
+const emit = defineEmits(['addCartItem']);
+
 // 改行を<br>タグに置き換えるcomputedプロパティ
 const formattedDescription = computed(() => {
     return props.item.description ? props.item.description.replace(/\n/g, '<br>') : '特になし';
 });
 
-const confirmingItemDeletion = ref(false);
-
-const confirmItemDeletion = () => {
-    confirmingItemDeletion.value = true;
-};
-
-/**
- * 指定されたユーザーIDに基づいてユーザー情報を削除する関数。
- * Inertia.jsのdeleteメソッドを使用して、サーバーにHTTP DELETEリクエストを送信する。
- *
- * @param {number} id - 削除するユーザーの一意の識別子（ID）
- */
-const deleteItem = (id) => {
-    Inertia.delete(route('items.destroy', { item: id }));
-};
-
-const closeModal = () => {
-    confirmingItemDeletion.value = false;
-};
-
-/**
- * 指定されたユーザーIDに基づいてユーザー情報を削除する関数。
- * Inertia.jsのdeleteメソッドを使用して、サーバーにHTTP DELETEリクエストを送信する。
- *
- * @param {number} id - 削除するユーザーの一意の識別子（ID）
- */
-const showEditForm = (id) => {
-    Inertia.get(route('items.edit', { item: id }));
-};
+const handleAddToCart = () => emit('addCartItem');
 </script>
 
 <template>
@@ -90,7 +61,7 @@ const showEditForm = (id) => {
                 <div class="relative mb-4">
                     <p class="leading-relaxed text-orange-300 text-4xl font-bold"><span class="text-lg">¥ </span>{{ formattedPrices }}</p>
                 </div>
-                <button class="text-light bg-dark border border-gray-700 py-2 px-8 focus:outline-none hover:bg-primary rounded text-lg" @click="showEditForm(item.id)">購入手続きへ</button>
+                <button class="text-light bg-dark border border-gray-700 py-2 px-8 focus:outline-none hover:bg-primary rounded text-lg" @click.prevent="handleAddToCart">購入手続きへ</button>
             </div>
         </div>
     </div>
