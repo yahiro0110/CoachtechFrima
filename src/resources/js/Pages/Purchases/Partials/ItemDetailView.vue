@@ -4,8 +4,7 @@
  * @requires ref - リアクティブなデータ参照を作成するために使用
  * @requires computed - Vue 3の算出プロパティを作成するために使用
  */
-import { computed, ref } from 'vue';
-import { Inertia } from '@inertiajs/inertia';
+import { computed } from 'vue';
 
 /**
  * コンポーネントのプロパティ定義。
@@ -19,13 +18,26 @@ const props = defineProps({
     formattedPrices: String,
 });
 
+/**
+ * @requires defineEmits - カスタムイベントを定義するための関数
+ */
 const emit = defineEmits(['addCartItem']);
 
-// 改行を<br>タグに置き換えるcomputedプロパティ
+/**
+ * 商品の説明を整形する算出プロパティ。
+ * 商品の説明が改行を含む場合、改行を`<br>`タグに変換して整形する。
+ * また商品の説明が存在しない場合は、"特になし"という文字列を返す。
+ *
+ * @type {string} formattedDescription - 商品の説明を整形した文字列
+ */
 const formattedDescription = computed(() => {
     return props.item.description ? props.item.description.replace(/\n/g, '<br>') : '特になし';
 });
 
+/**
+ * 商品の購入手続きボタンがクリックされたときに発火する関数。
+ * 商品の購入手続きボタンがクリックされたときに、`addCartItem`イベントを発火する。
+ */
 const handleAddToCart = () => emit('addCartItem');
 </script>
 
@@ -61,7 +73,8 @@ const handleAddToCart = () => emit('addCartItem');
                 <div class="relative mb-4">
                     <p class="leading-relaxed text-orange-300 text-4xl font-bold"><span class="text-lg">¥ </span>{{ formattedPrices }}</p>
                 </div>
-                <button class="text-light bg-dark border border-gray-700 py-2 px-8 focus:outline-none hover:bg-primary rounded text-lg" @click.prevent="handleAddToCart">購入手続きへ</button>
+                <button class="text-light bg-primary border border-gray-700 py-2 px-8 focus:outline-none hover:bg-selected-button rounded text-lg" @click.prevent="handleAddToCart" v-if="!item.purchased">購入手続きへ</button>
+                <p class="text-light bg-dark border border-gray-700 py-2 px-8 focus:outline-none rounded text-lg text-center" v-else>売り切れました</p>
             </div>
         </div>
     </div>

@@ -96,6 +96,27 @@ class Item extends Model
     }
 
     /**
+     * 商品の購入有無を示す属性を追加する。
+     * - `purchased` : 購入済みの場合は `true`、未購入の場合は `false`
+     */
+    protected $appends = ['purchased'];
+
+    /**
+     * 商品の購入有無を示す属性を取得する。
+     * 'Item'モデルのインスタンスを取得する際に、自動的に'purchased'属性が計算され、その値がモデルのインスタンスに含まれる。
+     *
+     * 補足:メソッド名は一定の命名規則に従う必要がある
+     * - get{属性名}Attribute
+     * - 例: get{属性名}Attribute
+     *
+     * @return bool
+     */
+    public function getPurchasedAttribute()
+    {
+        return $this->purchases()->exists();
+    }
+
+    /**
      * 商品に関連する購入明細を取得する。
      *
      * このメソッドは一対多のリレーションシップを表し、関連するPurchaseモデルのインスタンスのコレクションを返す。
