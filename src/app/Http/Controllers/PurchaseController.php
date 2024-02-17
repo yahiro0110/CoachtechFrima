@@ -51,7 +51,7 @@ class PurchaseController extends Controller
      */
     public function store(StorePurchaseRequest $request)
     {
-        Purchase::create([
+        $purchase = Purchase::create([
             'item_id' => $request->item_id,
             'purchaser_id' => $request->purchaser_id,
             'status_id' => 1,
@@ -60,7 +60,25 @@ class PurchaseController extends Controller
             'email' => $request->email,
         ]);
 
-        return Redirect::route('home');
+        return Redirect::route('thanks', ['purchase' => $purchase->id]);
+    }
+
+    /**
+     * サンクスページを表示する。
+     *
+     * @param  \App\Models\Purchase  $purchase
+     * @return \Illuminate\Http\Response
+     */
+    public function thanks(Purchase $purchase)
+    {
+        return Inertia::render(
+            'Purchases/Thanks',
+            [
+                'purchase' => Purchase::select('item_id', 'purchaser_id', 'ship_address', 'payment_id', 'email', 'created_at')
+                    ->with('item.user.userImage', 'user', 'payment')
+                    ->findOrFail($purchase->id),
+            ]
+        );
     }
 
     /**

@@ -40,6 +40,7 @@ Route::resource('comments', CommentController::class)->middleware('auth', 'verif
 
 Route::resource('purchases', PurchaseController::class)->middleware('auth', 'verified');
 Route::get('/purchases/create/{item}', [PurchaseController::class, 'create'])->name('purchases.create.withParam')->middleware('auth', 'verified');
+Route::get('/purchases/thanks/{purchase}', [PurchaseController::class, 'thanks'])->name('thanks')->middleware('auth', 'verified');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');

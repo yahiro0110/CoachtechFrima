@@ -130,7 +130,7 @@ const StorePurchase = () => form.post(route('purchases.store'));
 </script>
 
 <template>
-    <div class="container md:flex md:justify-between md:items-start md:w-full mx-auto px-5 md:px-36">
+    <div class="container md:flex md:justify-between md:items-start md:w-full mx-auto px-5 md:px-36 md:mt-10">
 
         <!-- 配送先・お支払い方法編集 -->
         <div class="md:w-1/2">

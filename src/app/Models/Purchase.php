@@ -51,7 +51,7 @@ class Purchase extends Model
      */
     public function user()
     {
-        return $this->belongsTo(User::class, 'Purchaser_id');
+        return $this->belongsTo(User::class, 'purchaser_id');
     }
 
     /**
