@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PurchaseController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -33,6 +35,12 @@ Route::put('/items/{item}/detail', [ItemController::class, 'updateDetail'])->nam
 Route::post('/items/{item}/images', [ItemController::class, 'updateImages'])->name('items.images.update')->middleware('auth', 'verified');
 Route::post('/items/{item}/attach', [ItemController::class, 'attachFavorite'])->middleware('auth', 'verified')->name('items.attach');
 Route::delete('/items/{item}/detach', [ItemController::class, 'detachFavorite'])->middleware('auth', 'verified')->name('items.detach');
+
+Route::resource('comments', CommentController::class)->middleware('auth', 'verified');
+
+Route::resource('purchases', PurchaseController::class)->middleware('auth', 'verified');
+Route::get('/purchases/create/{item}', [PurchaseController::class, 'create'])->name('purchases.create.withParam')->middleware('auth', 'verified');
+Route::get('/purchases/thanks/{purchase}', [PurchaseController::class, 'thanks'])->name('thanks')->middleware('auth', 'verified');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
