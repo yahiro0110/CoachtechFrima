@@ -9,6 +9,8 @@ use App\Models\Condition;
 use App\Models\Item;
 use App\Models\Payment;
 use App\Models\Purchase;
+use App\Models\Status;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
@@ -21,7 +23,17 @@ class PurchaseController extends Controller
      */
     public function index()
     {
-        //
+        $user = Auth::user();
+        return Inertia::render(
+            'Purchases/Index',
+            [
+                'purchases' => $user->purchases()
+                    ->select('id', 'item_id', 'status_id', 'ship_address', 'payment_id', 'created_at')
+                    ->with('item.itemImages', 'status', 'payment')
+                    ->get(),
+                'statuses' => Status::select('id', 'name')->get(),
+            ]
+        );
     }
 
     /**
@@ -112,7 +124,9 @@ class PurchaseController extends Controller
      */
     public function update(UpdatePurchaseRequest $request, Purchase $purchase)
     {
-        //
+        $purchase->update($request->only(['status_id']));
+
+        return Redirect::route('purchases.index');
     }
 
     /**
