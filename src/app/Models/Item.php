@@ -99,7 +99,7 @@ class Item extends Model
      * 商品の購入有無を示す属性を追加する。
      * - `purchased` : 購入済みの場合は `true`、未購入の場合は `false`
      */
-    protected $appends = ['purchased'];
+    protected $appends = ['purchased', 'soldout'];
 
     /**
      * 商品の購入有無を示す属性を取得する。
@@ -114,6 +114,24 @@ class Item extends Model
     public function getPurchasedAttribute()
     {
         return $this->purchases()->exists();
+    }
+
+    /**
+     * 商品が売却済みかどうかを示す属性を取得する。
+     *
+     * 'soldout' 属性は、商品が購入され('purchased'がtrue)、さらに購入レコードのstatus_idが4である場合にtrueを返す。
+     *
+     * @return bool
+     */
+    public function getSoldoutAttribute()
+    {
+        // 'purchased'がtrueでなければ、売却済みでないと判断する
+        if (!$this->getPurchasedAttribute()) {
+            return false;
+        }
+
+        // 'purchases'リレーションを利用して、status_idが4のレコードが存在するかチェックする
+        return $this->purchases()->where('status_id', 4)->exists();
     }
 
     /**
