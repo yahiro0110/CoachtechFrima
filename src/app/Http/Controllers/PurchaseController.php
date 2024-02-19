@@ -126,7 +126,7 @@ class PurchaseController extends Controller
     {
         $purchase->update($request->only(['status_id']));
 
-        return Redirect::route('purchases.index');
+        return redirect()->back();
     }
 
     /**

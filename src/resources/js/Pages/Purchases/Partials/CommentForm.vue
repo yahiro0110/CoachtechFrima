@@ -4,10 +4,8 @@
  * @requires ref - リアクティブなデータ参照を作成するために使用
  * @requires computed - Vue 3の算出プロパティを作成するために使用
  */
-import Modal from '@/Components/Modal.vue';
-import DangerButton from '@/Components/DangerButton.vue';
-import SecondaryButton from '@/Components/SecondaryButton.vue';
-import { computed, onMounted, ref } from 'vue';
+import InputError from '@/Components/InputError.vue';
+import { onMounted, ref } from 'vue';
 import { useForm, usePage } from '@inertiajs/inertia-vue3';
 import { Inertia } from '@inertiajs/inertia';
 
@@ -161,6 +159,7 @@ const deleteCommentInformation = (id) => {
                     <div class="relative mb-4">
                         <label for="message" class="leading-7 text-sm text-light">商品へのコメント</label>
                         <textarea id="message" name="message" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 h-32 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out" v-model="form.message"></textarea>
+                        <InputError class="mt-2" :message="form.errors.message" />
                     </div>
                     <button class="text-light bg-primary border-0 py-2 px-6 focus:outline-none hover:bg-selected-button rounded text-lg mb-4 w-full">コメントを送信する</button>
                     <p class="leading-relaxed text-sm">相手のことを考え丁寧なコメントを心がけましょう。不快な言葉遣いなどは利用制限や退会処分となることがあります。</p>

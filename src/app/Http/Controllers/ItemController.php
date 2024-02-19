@@ -10,6 +10,7 @@ use App\Models\Category;
 use App\Models\Condition;
 use App\Models\Item;
 use App\Models\ItemImage;
+use App\Models\Status;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -171,6 +172,9 @@ class ItemController extends Controller
                 'item' => Item::with('itemImages')->findOrFail($item->id),
                 'categories' => Category::select('id', 'name', 'parent_id')->get(),
                 'conditions' => Condition::select('id', 'name')->get(),
+                'purchases' => $item->purchases()->with('user', 'status', 'payment')->get(),
+                'comments' => $item->comments()->with('user.userImage')->get(),
+                'statuses' => Status::select('id', 'name')->get(),
             ]
         );
     }

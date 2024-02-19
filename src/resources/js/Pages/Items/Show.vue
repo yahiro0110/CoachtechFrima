@@ -10,6 +10,8 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import GalleryView from '@/Pages/Items/Partials/GalleryView.vue';
 import ItemDetailView from '@/Pages/Items/Partials/ItemDetailView.vue';
+import PurchaseView from '@/Pages/Items/Partials/PurchaseView.vue';
+import CommentForm from '@/Pages/Purchases/Partials/CommentForm.vue';
 import { Head } from '@inertiajs/inertia-vue3';
 import { computed } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
@@ -17,13 +19,20 @@ import { Inertia } from '@inertiajs/inertia';
 /**
  * コンポーネントのプロパティ定義。
  *
+ * @property {Object} item - 商品情報を含むオブジェクト
  * @property {Array} categories - 商品カテゴリーの一覧を含む配列
  * @property {Array} conditions - 商品の状態の一覧を含む配列
+ * @property {Array} purchases - 商品の購入情報を含む配列
+ * @property {Array} comments - 商品のコメント情報を含む配列
+ * @property {Array} statuses - 商品のステータス情報を含む配列
  */
 const props = defineProps({
     item: Object,
     categories: Array,
     conditions: Array,
+    purchases: Array,
+    comments: Array,
+    statuses: Array,
 });
 
 /**
@@ -42,7 +51,11 @@ const conditionName = computed(() => {
     return condition ? condition.name : '不明';
 });
 
-// カテゴリパスを構築する関数
+/**
+ * カテゴリパスを構築する関数。
+ *
+ * @param {number} categoryId - カテゴリID
+ */
 const buildCategoryPath = (categoryId) => {
     const path = [];
     let currentCategory = props.categories.find(category => category.id === categoryId);
@@ -53,31 +66,12 @@ const buildCategoryPath = (categoryId) => {
     return path.join(' > '); // カテゴリパスを文字列として結合
 };
 
-// カテゴリパスを取得するための算出プロパティ
+/**
+ * 商品のカテゴリパスを提供する算出プロパティ。
+ */
 const categoryPath = computed(() => {
     return buildCategoryPath(props.item.category_id);
 });
-
-/**
- * 商品情報を登録する関数。
- *
- * Inertia.jsのpostメソッドを使用して、フォームに入力されたデータをサーバーに送信する。
- * 成功時にはフォームの送信状態を更新し、エラー時にはエラーメッセージを表示するための処理が含まれる。
- * `preserveScroll`はページ遷移後のスクロール位置維持に使用。
- * `onSuccess`はフォーム送信成功時に実行されるコールバック関数で、`form.recentlySuccessful`をtrueに設定する。
- */
-const StoreItem = () => {
-    // imagesFormRef からファイルリストを取得
-    form.files = imagesFormRef.value.getSelectedFiles();
-
-    form.post(route('items.store'), {
-        preserveScroll: true,
-        onSuccess: () => {
-            form.recentlySuccessful = true;
-            form.reset();
-        },
-    });
-};
 
 /**
  * ユーザーを前のページに戻す関数。
@@ -97,7 +91,7 @@ const goBack = () => {
 
         <section class="text-gray-600 body-font">
             <!-- 戻るリンクエリア -->
-            <div class="my-4 text-center md:text-left md:ml-36 2xl:ml-96">
+            <div class="my-4 text-center md:text-left md:ml-36 2xl:ml-96 2xl:px-80">
                 <a class="inline-flex items-center gap-x-1 text-sm text-light hover:text-indigo-400 cursor-pointer" @click="goBack">
                     <svg class="flex-shrink-0 w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="m15 18-6-6 6-6" />
@@ -111,6 +105,12 @@ const goBack = () => {
 
             <!-- 商品詳細エリア -->
             <ItemDetailView :item="item" :categoryPath="categoryPath" :conditionName="conditionName" :formattedPrices="formattedPrices" />
+
+            <!-- 購入情報エリア -->
+            <PurchaseView :purchases="purchases" :statuses="statuses" />
+
+            <!-- コメントフォームエリア -->
+            <CommentForm :item="item" :comments="comments" />
 
         </section>
 
