@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreCommentRequest;
 use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -34,7 +35,7 @@ class CommentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreCommentRequest $request)
     {
         Comment::create([
             'item_id' => $request->item_id,
@@ -42,7 +43,7 @@ class CommentController extends Controller
             'message' => $request->message,
         ]);
 
-        return Redirect::route('purchases.create.withParam', ['item' => $request->item_id]);
+        return redirect()->back();
     }
 
     /**
@@ -90,7 +91,7 @@ class CommentController extends Controller
         try {
             $comment->delete();
 
-            return Redirect::route('purchases.create.withParam', ['item' => $comment->item_id]);
+            return redirect()->back();
         } catch (\Exception $e) {
             return to_route('items.index')->with([
                 'message' => 'コメントの削除に失敗しました。',
