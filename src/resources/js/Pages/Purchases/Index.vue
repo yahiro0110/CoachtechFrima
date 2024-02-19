@@ -179,7 +179,7 @@ const updateStatus = (purchaseForm, purchaseId) => {
             <h2 class="font-semibold text-xl text-light leading-tight text-center">購入した商品</h2>
         </template>
 
-        <section class="text-gray-600 body-font">
+        <section class="text-gray-600 body-font 2xl:w-2/3 2xl:mx-auto">
             <!-- navigation area -->
             <div class="flex flex-col items-center">
                 <div class="border-b border-gray-700 w-3/4">
@@ -226,15 +226,15 @@ const updateStatus = (purchaseForm, purchaseId) => {
                             <p class="leading-relaxed text-light">{{ purchase.payment }}</p>
                         </div>
 
-                        <div class="md:flex-grow md:w-1/12 2xl:px-28">
+                        <div class="md:flex-grow md:w-1/12">
                             <h2 class="text-2xl font-medium text-gray-400 title-font mb-2">配送状況</h2>
                             <p class="leading-relaxed text-light mb-11">{{ purchase.status }}</p>
                             <form @submit.prevent="updateStatus(purchase.form, purchase.id)">
-                                <select class="mt-1 py-3 px-4 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-sm" v-model="purchase.form.status_id">
+                                <select class="mt-1 py-3 px-4 block w-full 2xl:w-5/6 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-sm" v-model="purchase.form.status_id">
                                     <option value="1">選択してください</option>
                                     <option v-for="status in filteredStatuses" :key="status.id" :value="status.id">{{ status.name }}</option>
                                 </select>
-                                <button class="text-light bg-primary border-none py-2 px-8 focus:outline-none hover:bg-selected-button rounded text-lg mt-3 w-full">更新する</button>
+                                <button class="text-light bg-primary border-none py-2 px-8 focus:outline-none hover:bg-selected-button rounded text-lg mt-3 w-full 2xl:w-5/6">更新する</button>
                             </form>
                         </div>
                     </div>

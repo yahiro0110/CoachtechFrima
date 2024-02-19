@@ -120,7 +120,7 @@ watch([statusSale, statusTransaction, statusSold], () => {
 
         <FlashMessage />
 
-        <section class="text-gray-600 body-font">
+        <section class="text-gray-600 body-font 2xl:w-2/3 2xl:mx-auto">
             <!-- navigation area -->
             <div class="flex flex-col items-center">
                 <div class="border-b border-gray-700 w-3/4">
