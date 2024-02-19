@@ -33,8 +33,9 @@ Route::get('/home', [ItemController::class, 'home'])->name('home')->middleware('
 Route::resource('items', ItemController::class)->middleware('auth', 'verified');
 Route::put('/items/{item}/detail', [ItemController::class, 'updateDetail'])->name('items.detail.update')->middleware('auth', 'verified');
 Route::post('/items/{item}/images', [ItemController::class, 'updateImages'])->name('items.images.update')->middleware('auth', 'verified');
-Route::post('/items/{item}/attach', [ItemController::class, 'attachFavorite'])->middleware('auth', 'verified')->name('items.attach');
-Route::delete('/items/{item}/detach', [ItemController::class, 'detachFavorite'])->middleware('auth', 'verified')->name('items.detach');
+Route::post('/items/{item}/attach', [ItemController::class, 'attachFavorite'])->name('items.attach')->middleware('auth', 'verified');
+Route::delete('/items/{item}/detach', [ItemController::class, 'detachFavorite'])->name('items.detach')->middleware('auth', 'verified');
+Route::get('/seller', [ItemController::class, 'seller'])->name('seller')->middleware('auth', 'verified');
 
 Route::resource('comments', CommentController::class)->middleware('auth', 'verified');
 
