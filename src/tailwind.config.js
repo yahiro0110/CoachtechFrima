@@ -139,6 +139,43 @@ module.exports = {
                         opacity: "1"
                     }
                 },
+                "fade-in-fwd": {
+                    "0%": {
+                        transform: "translateZ(-80px)",
+                        opacity: "0"
+                    },
+                    to: {
+                        transform: "translateZ(0)",
+                        opacity: "1"
+                    }
+                },
+                "tracking-in-contract": {
+                    "0%": {
+                        "letter-spacing": "1em",
+                        opacity: "0"
+                    },
+                    "40%": {
+                        opacity: ".6"
+                    },
+                    to: {
+                        "letter-spacing": "normal",
+                        opacity: "1"
+                    }
+                },
+                "tracking-in-expand-fwd": {
+                    "0%": {
+                        "letter-spacing": "-.5em",
+                        transform: "translateZ(-700px)",
+                        opacity: "0"
+                    },
+                    "40%": {
+                        opacity: ".6"
+                    },
+                    to: {
+                        transform: "translateZ(0)",
+                        opacity: "1"
+                    }
+                },
             },
             animation: {
                 flash: "flashFade 3.0s forwards",
@@ -150,6 +187,9 @@ module.exports = {
                 "flip-in-diag-1-bl": "flip-in-diag-1-bl 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940)   both",
                 "flip-out-diag-1-tr": "flip-out-diag-1-tr 0.45s cubic-bezier(0.550, 0.085, 0.680, 0.530)   both",
                 "fade-in": "fade-in 1.2s cubic-bezier(0.390, 0.575, 0.565, 1.000)   both",
+                "fade-in-fwd": "fade-in-fwd 4s cubic-bezier(0.390, 0.575, 0.565, 1.000)   both",
+                "tracking-in-contract": "tracking-in-contract 2.5s cubic-bezier(0.215, 0.610, 0.355, 1.000) 0.5s both",
+                "tracking-in-expand-fwd": "tracking-in-expand-fwd 2.5s cubic-bezier(0.215, 0.610, 0.355, 1.000)   both",
             },
         },
     },
