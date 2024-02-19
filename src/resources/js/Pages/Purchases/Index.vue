@@ -7,6 +7,7 @@
  * @requires Head - Inertia.jsのヘルパーメソッドを提供し、ページのタイトルやメタ情報を動的に変更する
  */
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import NotFoundImage from '@/Components/NotFoundImage.vue';
 import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
 import { computed, onMounted, ref, watch } from 'vue';
 
@@ -205,6 +206,12 @@ const updateStatus = (purchaseForm, purchaseId) => {
 
             <!-- items area -->
             <div class="container md:px-5 mx-auto w-3/4">
+                <!-- 購入がなかった場合に表示 -->
+                <div class="text-center mx-auto py-24" v-if="!reactivePurchases.length">
+                    <p class="font-great-vibes text-2xl mb-4 mt-2">Ops, Not found!</p>
+                    <NotFoundImage />
+                </div>
+                <!-- 購入商品の一覧 -->
                 <div class="divide-y divide-gray-400">
                     <div class="py-8 flex flex-wrap md:flex-nowrap" v-for="(purchase, index) in reactivePurchases" :key="index">
 

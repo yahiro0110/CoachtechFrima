@@ -6,6 +6,7 @@
  */
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import FlashMessage from '@/Components/FlashMessage.vue';
+import NotFoundImage from '@/Components/NotFoundImage.vue';
 import { Head, Link } from '@inertiajs/inertia-vue3';
 import { onMounted, ref, watch } from 'vue';
 
@@ -140,6 +141,12 @@ watch([statusSale, statusTransaction, statusSold], () => {
 
             <!-- items area -->
             <div class="container px-5 py-10 mx-auto">
+                <!-- 出品がなかった場合に表示 -->
+                <div class="text-center mx-auto py-16" v-if="!reactiveItems.length">
+                    <p class="font-great-vibes text-2xl mb-4">Ops, Not found!</p>
+                    <NotFoundImage />
+                </div>
+                <!-- 出品商品の一覧 -->
                 <div class="flex flex-wrap -m-4">
                     <div class="p-4 md:w-1/4" v-for="(item, index) in reactiveItems" :key="item.id">
                         <div class="h-full rounded-lg overflow-hidden">
