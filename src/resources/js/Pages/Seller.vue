@@ -22,9 +22,25 @@ import { computed, onMounted, ref, nextTick } from 'vue';
  * @property {Array} conditions - 商品の状態の一覧を含む配列
  */
 const props = defineProps({
+    user: Object,
     items: Array,
     categories: Array,
     conditions: Array,
+});
+
+/**
+ * 出品者の画像アイコンを取得するための算出プロパティ。
+ * 出品者の画像アイコンが存在する場合は、画像のパスを返し、存在しない場合はデフォルトのアイコンを返す。
+ *
+ * @returns {String} - 出品者のアイコンのパス
+ */
+const sellerIcon = computed(() => {
+    return props.user.user_image.image_path ? '/storage/images/users/' + props.user.user_image.image_path : '/images/default-user-icon.jpg';
+});
+
+// 改行を<br>タグに置き換えるcomputedプロパティ
+const formattedIntroduction = computed(() => {
+    return props.user.user_detail.introduction ? props.user.user_detail.introduction.replace(/\n/g, '<br>') : '商品を閲覧いただき、ありがとうございます。';
 });
 
 /**
@@ -178,7 +194,6 @@ onMounted(() => {
         price: item.price ? item.price.toLocaleString() : '---',
         category_id: item.category_id,
         item_image: '/storage/images/items/' + item.item_images[0].image_path,
-        seller_id: item.seller_id,
         seller_image: item.user.user_image.image_path ? '/storage/images/users/' + item.user.user_image.image_path : '/images/default-user-icon.jpg',
         comment_count: item.comments.length, // コメント数
         favorite_count: item.favoriteUser_count, // お気に入り登録者数
@@ -239,13 +254,17 @@ const detachItem = (item) => {
 </script>
 
 <template>
-    <Head title="ホーム" />
+    <Head title="出品者" />
 
     <AuthenticatedLayout>
-        <!-- トップ上部メッセージ -->
-        <div class="flex justify-center items-center h-20 md:h-36 bg-cover bg-center object-cover object-center rainy-background" style="background-image: url('/images/header-image.jpeg')">
-            <h2 class="font-great-vibes text-xl md:text-3xl text-light leading-tight text-center">Here's to your fabulous find!</h2>
-        </div>
+
+        <template #header>
+            <div class="flex flex-col justify-center items-center p-4 bg-cover bg-center object-cover object-center" style="background-image: url('/images/seller-image.jpeg')">
+                <img class="inline-block h-20 w-20 rounded-full object-cover" :src="sellerIcon" alt="seller image">
+                <h2 class="font-great-vibes text-xl md:text-3xl text-light leading-tight text-center mt-4">Welcome to {{ user.name }}'s Profile Page!</h2>
+                <p class="text-gray-400 mt-8" v-html="formattedIntroduction"></p>
+            </div>
+        </template>
 
         <section class="text-light body-font">
 
@@ -303,7 +322,7 @@ const detachItem = (item) => {
                                 <p class="leading-relaxed text-orange-300 text-3xl font-bold mb-3"><span class="text-lg">¥ </span>{{ item.price }}</p>
                                 <div class="flex items-center flex-wrap ">
                                     <!-- 出品者画像 -->
-                                    <Link class="inline-flex items-center md:mb-2 lg:mb-0 cursor-pointer" as="button" :href="`/seller?id=${item.seller_id}`">
+                                    <Link class="inline-flex items-center md:mb-2 lg:mb-0 cursor-pointer" as="button">
                                     <img class="inline-block h-[2.5rem] w-[2.5rem] rounded-full object-cover" :src="item.seller_image" alt="seller image">
                                     </Link>
                                     <!-- コメント -->

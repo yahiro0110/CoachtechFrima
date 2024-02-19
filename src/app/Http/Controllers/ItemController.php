@@ -11,6 +11,7 @@ use App\Models\Condition;
 use App\Models\Item;
 use App\Models\ItemImage;
 use App\Models\Status;
+use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -82,6 +83,29 @@ class ItemController extends Controller
                 'status' => 'warning',
             ]);
         }
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function seller(Request $request)
+    {
+        return Inertia::render(
+            'Seller',
+            [
+                'user' => User::with('userImage', 'userDetail')->findOrFail($request->id),
+                'items' => Item::select('id', 'name', 'brand', 'seller_id', 'category_id', 'price')
+                    ->where('seller_id', $request->id)
+                    ->with(['itemImages', 'user.userImage', 'comments'])
+                    ->WithFavoriteUserCount()
+                    ->withUserAttached(Auth::id())
+                    ->get(),
+                'categories' => Category::select('id', 'name', 'parent_id')->get(),
+                'conditions' => Condition::select('id', 'name')->get(),
+            ]
+        );
     }
 
     /**

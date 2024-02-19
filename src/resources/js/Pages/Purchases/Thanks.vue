@@ -52,7 +52,7 @@ const formatDate = computed(() => {
     <AuthenticatedLayout>
         <template #header>
             <div class="flex flex-col justify-center items-center">
-                <Link class="inline-flex items-center lg:mb-0 cursor-pointer" as="button">
+                <Link class="inline-flex items-center lg:mb-0 cursor-pointer" as="button" :href="`/seller?id=${purchase.item.seller_id}`">
                 <img class="inline-block h-20 w-20 rounded-full object-cover" :src="sellerIcon" alt="seller image">
                 </Link>
                 <h2 class="font-great-vibes text-xl md:text-3xl text-light leading-tight text-center mt-4">Thank you for your purchase!</h2>

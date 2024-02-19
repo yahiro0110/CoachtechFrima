@@ -121,7 +121,7 @@ const goBack = () => {
     <AuthenticatedLayout>
         <template #header>
             <div class="flex justify-center items-center">
-                <Link class="inline-flex items-center md:mb-2 lg:mb-0 cursor-pointer" as="button">
+                <Link class="inline-flex items-center md:mb-2 lg:mb-0 cursor-pointer" as="button" :href="`/seller?id=${item.seller_id}`">
                 <img class="inline-block h-[3.5rem] w-[3.5rem] rounded-full object-cover" :src="sellerIcon" alt="seller image">
                 </Link>
                 <h2 class="font-great-vibes text-xl text-light leading-tight text-center ml-4">Thank You for Your Interest!</h2>
