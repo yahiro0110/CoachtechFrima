@@ -130,7 +130,7 @@ const goBack = () => {
 
         <section class="text-gray-600 body-font">
             <!-- 戻るリンクエリア -->
-            <div class="my-4 text-center md:text-left md:ml-36 2xl:ml-96">
+            <div class="my-4 text-center md:text-left md:ml-36 2xl:ml-96 2xl:px-80">
                 <a class="inline-flex items-center gap-x-1 text-sm text-light hover:text-indigo-400 cursor-pointer" @click="goBack">
                     <svg class="flex-shrink-0 w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="m15 18-6-6 6-6" />
