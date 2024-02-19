@@ -119,7 +119,7 @@ const getFilteredItemsAndCount = () => {
     // 商品名によるフィルタが適用された商品の件数を計算
     const filteredByName = filterByName(filteredByCategory);
     return {
-        filteredItems: filtered.length ? filteredByName : filtered, // 商品名フィルタが空の場合はお気に入りフィルタのみ適用
+        filteredItems: filteredByName.length ? filteredByName : filteredByCategory, // 商品名フィルタが空の場合はお気に入りフィルタのみ適用
         filteredByFavoriteCount: filteredByFavorite.length,
         filteredByNameCount: filteredByName.length,
         filteredByCategoryCount: filteredByCategory.length,

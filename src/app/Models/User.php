@@ -121,7 +121,7 @@ class User extends Authenticatable
      */
     public function purchases()
     {
-        return $this->hasMany(Purchase::class);
+        return $this->hasMany(Purchase::class, 'purchaser_id');
     }
 
     /**
