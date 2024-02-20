@@ -3,7 +3,7 @@ services:
     db:
         platform: linux/amd64
         image: mysql:8.0.26
-        container_name: 'mysql_test'
+        container_name: 'mysql'
         environment:
             MYSQL_ROOT_PASSWORD: root
             MYSQL_DATABASE: mysql_db
@@ -17,9 +17,9 @@ services:
         command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
         # 名前付きボリュームを設定する（名前付きボリューム:コンテナ側ボリュームの場所）
         volumes:
-            - db_data_test:/var/lib/mysql
-            - db_my.cnf_test:/etc/mysql/conf.d/my.cnf
-            - db_sql_test:/docker-entrypoint-initdb.d
+            - db_data:/var/lib/mysql
+            - db_my.cnf:/etc/mysql/conf.d/my.cnf
+            - db_sql:/docker-entrypoint-initdb.d
 
     php:
         build: ./docker/php
@@ -33,7 +33,7 @@ services:
 
     nginx:
         image: nginx:latest
-        container_name: 'nginx_test'
+        container_name: 'nginx'
         # ポートフォワードの指定（ホスト側ポート：コンテナ側ポート）
         ports:
             - 80:80
@@ -47,7 +47,7 @@ services:
 
     phpmyadmin:
         image: phpmyadmin/phpmyadmin:latest
-        container_name: 'phpmyadmin_test'
+        container_name: 'phpmyadmin'
         environment:
             - PMA_ARBITRARY=1 # サーバ設定：サーバーをローカル以外も指定
             - PMA_HOST=db # ホスト設定：dbを指定
@@ -63,8 +63,15 @@ services:
         volumes:
             - ./phpmyadmin/sessions:/sessions
 
+    mail:
+        image: mailhog/mailhog
+        container_name: 'mailhog'
+        # ポートフォワードの指定（ホスト側ポート：コンテナ側ポート）
+        ports:
+            - 8025:8025
+
 # サービスレベルで名前付きボリュームを命名する
 volumes:
-    db_data_test:
-    db_my.cnf_test:
-    db_sql_test:
+    db_data:
+    db_my.cnf:
+    db_sql:

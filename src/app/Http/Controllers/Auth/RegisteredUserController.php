@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Role;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
@@ -33,7 +34,7 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:'.User::class,
+            'email' => 'required|string|email|max:255|unique:' . User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
@@ -42,6 +43,18 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
+
+        // ロールデータを取得する
+        $roles = Role::all();
+
+        // ユーザには「ユーザ」のロールを割り当てる
+        $user->roles()->attach($roles->find(2));
+
+        // ユーザの詳細情報を作成する
+        $user->userDetail()->create();
+
+        // ユーザの画像を作成する
+        $user->userImage()->create();
 
         event(new Registered($user));
 

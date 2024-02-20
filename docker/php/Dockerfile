@@ -7,7 +7,7 @@ RUN apt-get update \
     && apt-get install -y zlib1g-dev mariadb-client vim libzip-dev \
     && docker-php-ext-install zip pdo_mysql
 
-# Node.jsをインストール
+# Node.js install
 RUN curl -sL https://deb.nodesource.com/setup_16.x | bash - \
     && apt-get install -y nodejs
 
