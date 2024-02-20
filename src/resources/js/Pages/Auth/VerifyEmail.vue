@@ -23,7 +23,7 @@ const verificationLinkSent = computed(() => props.status === 'verification-link-
         <Head title="Email Verification" />
 
         <div class="mb-4 text-sm text-gray-600">
-            この度はCOACHTECH FREMAにご登録いただき、誠にありがとうございます。ご利用いただくために、メールアドレスの確認が必要となります。<br /><br />
+            この度はCOACHTECH FRIMAにご登録いただき、誠にありがとうございます。ご利用いただくために、メールアドレスの確認が必要となります。<br /><br />
             先ほどお客様のメールアドレス宛に確認用のリンクを含むメールを送信いたしました。メールに記載されているリンクをクリックして、メールアドレスの確認を完了してください。
         </div>
 

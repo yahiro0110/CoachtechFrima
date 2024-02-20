@@ -23,7 +23,7 @@ defineProps({
             </template>
         </div>
         <div class="w-full">
-            <h1 class="font-playfair-display text-2xl md:text-5xl text-light text-center animate-tracking-in-expand-fwd md:animate-tracking-in-contract">COACHTECH FREMA</h1>
+            <h1 class="font-playfair-display text-2xl md:text-5xl text-light text-center animate-tracking-in-expand-fwd md:animate-tracking-in-contract">COACHTECH FRIMA</h1>
             <p class="font-great-vibes text-base md:text-2xl text-gray-300 mt-2 md:mt-4 mx-10 text-center animate-tracking-in-expand-fwd md:animate-tracking-in-contract">May you find a treasure at the market.</p>
         </div>
     </div>

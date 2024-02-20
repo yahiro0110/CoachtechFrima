@@ -1,4 +1,4 @@
-# COACH TECH FREMA
+# COACH TECH FRIMA
 
 ## Outline
 

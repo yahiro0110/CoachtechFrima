@@ -56,7 +56,7 @@ const formatDate = computed(() => {
                 <img class="inline-block h-20 w-20 rounded-full object-cover" :src="sellerIcon" alt="seller image">
                 </Link>
                 <h2 class="font-great-vibes text-xl md:text-3xl text-light leading-tight text-center mt-4">Thank you for your purchase!</h2>
-                <p class="text-gray-400 mt-8">あなたの購入が無事に完了しました!<br />この度はCOACHTECH FREMAをご利用いただき、誠にありがとうございます!</p>
+                <p class="text-gray-400 mt-8">あなたの購入が無事に完了しました!<br />この度はCOACHTECH FRIMAをご利用いただき、誠にありがとうございます!</p>
             </div>
         </template>
 
@@ -155,7 +155,7 @@ const formatDate = computed(() => {
                 <!-- サポートセンターの案内 -->
                 <div class="xl:w-3/5 md:w-full mx-2 md:mx-0">
                     <h1 class="text-lg md:text-2xl font-medium title-font text-gray-500 mb-4">ご不明点やサポートが必要な場合</h1>
-                    <p class="leading-relaxed text-gray-400">ご質問やご不明点がございましたら、いつでもCOACHTECH FREMAサポートセンターまでお気軽にお問い合わせください。<br />お客様の満足なお買い物体験をサポートするため、私たちは常にここにいます。</p>
+                    <p class="leading-relaxed text-gray-400">ご質問やご不明点がございましたら、いつでもCOACHTECH FRIMAサポートセンターまでお気軽にお問い合わせください。<br />お客様の満足なお買い物体験をサポートするため、私たちは常にここにいます。</p>
                 </div>
 
             </div>
