@@ -31,7 +31,7 @@ class Purchase extends Model
     /**
      * このモデルが所属する商品を取得する。
      *
-     * このメソッドは1対1のリレーションシップの逆向きを表し、所属するItemモデルのインスタンスを返す。
+     * このメソッドは一対多のリレーションシップの逆向きを表し、所属するItemモデルのインスタンスを返す。
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */

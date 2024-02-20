@@ -28,7 +28,7 @@ class Comment extends Model
     /**
      * このモデルが所属する商品を取得する。
      *
-     * このメソッドは1対1のリレーションシップの逆向きを表し、所属するItemモデルのインスタンスを返す。
+     * このメソッドは一対多のリレーションシップの逆向きを表し、所属するItemモデルのインスタンスを返す。
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
@@ -38,11 +38,9 @@ class Comment extends Model
     }
 
     /**
-     * このモデルが所属する出品者を取得する。
+     * このモデルが所属する投稿者を取得する。
      *
      * このメソッドは一対多のリレーションシップの逆向きを表し、所属するUserモデルのインスタンスを返す。
-     * 購入明細は `Purchaser_id` カラムを介してユーザーと関連付けられる。
-     * なお、ここでのユーザーは、商品を購入しているユーザーである。
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
