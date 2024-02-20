@@ -33,7 +33,7 @@ let userIcon = usePage().props.value.auth.userImage ? ref('/storage/images/users
                 <Link :href="route('home')">
                 <div class="shrink-0 flex items-center">
                     <ApplicationLogo class="block h-9 w-auto fill-current text-light" />
-                    <span class="font-playfair-display ml-3 text-xl text-light">COACHTECH FREMA</span>
+                    <span class="font-playfair-display ml-3 text-xl text-light">COACHTECH FRIMA</span>
                 </div>
                 </Link>
                 <!-- アカウントボタン レスポンシブ対応（スマホサイズで表示） -->
@@ -138,10 +138,10 @@ let userIcon = usePage().props.value.auth.userImage ? ref('/storage/images/users
                     <Link :href="route('home')">
                     <div class="shrink-0 flex items-center">
                         <ApplicationLogo class="block h-9 w-auto fill-current text-light" />
-                        <span class="font-playfair-display ml-3 text-xl text-light">COACHTECH FREMA</span>
+                        <span class="font-playfair-display ml-3 text-xl text-light">COACHTECH FRIMA</span>
                     </div>
                     </Link>
-                    <p class="text-sm text-gray-500 sm:ml-6 sm:mt-0 mt-4">© 2020 COACHTECH FREMA —
+                    <p class="text-sm text-gray-500 sm:ml-6 sm:mt-0 mt-4">© 2020 COACHTECH FRIMA —
                         <a href="https://twitter.com/YAHIRO01101/" rel="noopener noreferrer" class="text-gray-600 ml-1" target="_blank">@YAHIRO</a>
                     </p>
                     <span class="inline-flex sm:ml-auto sm:mt-0 mt-4 justify-center sm:justify-start">
