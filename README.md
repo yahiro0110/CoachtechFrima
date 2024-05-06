@@ -77,6 +77,9 @@ PHP のフレームワーク Laravel および Vue.js で作成された Web ア
     # 初期データの投入
     php artisan db:seed
 
+    # シンボリックリンクの作成
+    php artisan storage:link
+
     # npmのインストール
     npm install
 
